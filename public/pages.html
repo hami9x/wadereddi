@@ -1,28 +1,11 @@
-<wdefine tagname="votebox">
-	<div class="votebox">
-		<div class="row-fluid">&nbsp;</div>
-	    <div class="row-fluid">
-			<a href="#" bind-on-click="|WrapReSort(Vote.VoteUp)" bind-class-highlighted="Vote.Voted | isEqual(@1, 1)">
-				<i class="glyphicon glyphicon-arrow-up"></i>
-			</a>
-		</div>
-		<div class="row-fluid"> <% Vote.Score %> </div>
-		<div class="row-fluid">
-			<a href="#" bind-on-click="|WrapReSort(Vote.VoteDown)" bind-class-highlighted="Vote.Voted | isEqual(@1, -1)">
-				<i class="glyphicon glyphicon-arrow-down"></i>
-			</a>
-		</div>
-	</div>
-</wdefine>
-
 <div class="wrapper">
     <div class="box">
         <div class="row">
             <!-- sidebar -->
             <div class="column col-sm-2" id="sidebar">
-				<switchmenu ActiveClass="active" bind="Current: PageInfo.Id">
+				<switchmenu ActiveClass="active" @Current="PageInfo.Id" w-belong="grp-main">
 				    <ul class="nav">
-			            <li case="pg-home"><a bind-page="|url('pg-home')">Home</a></li>
+			            <li case="pg-home"><a @href="|url('pg-home')">Home</a></li>
 				    </ul>
 				</switchmenu>
                 <ul class="nav hidden-xs" id="sidebar-footer">
@@ -37,40 +20,15 @@
             <div class="column col-sm-10" id="main">
                 <div class="padding">
                     <div class="full col-sm-9">
-						<div class="row-fluid">
-	                        <div class="col-sm-12">
-								<switchmenu bind="Current: SortMode">
-		                         	<ul class="nav nav-pills">
-									  	<li case="top">
-											<a href="#" bind-on-click="|SortByTop">Top</a>
-										</li>
-									  	<li case="latest">
-											<a href="#" bind-on-click="|SortByLatest">Latest</a>
-										</li>
-									</ul>
-								</switchmenu>
-	                        </div>
-						</div>
-                        
-                       <div class="row-fluid" bind-each="Posts -> _, post">
-						    <div class="col-sm-1"><votebox bind="Vote: post.Vote; ReSortFn: TopRefresh"></votebox></div>
-                           	<div class="col-sm-11">
-                           		<h3 bind-html="post.Title"></h3>
-                            	<h4>
-									by <% post.Author %>
-									<ww bind-each="post.Labels -> _, label">
-										<span class="label label-default" bind-html="label"></span>
-									</ww>
-								</h4>
-								<h4>
-                            		<small class="text-muted"><% post.Time %> hours ago
-									• <a bind-page="post.Id | url('pg-comments', @1)" class="text-muted">
-										<% post.Comments | len(@1) %> Comments
-									</a></small>
-                            	</h4>
-                         	</div>
-                        </div>      
-                      
+						<ww w-belong="pg-home">
+							<winclude src="/public/pg-home.html"></winclude>
+						</ww>
+						<ww w-belong="pg-comments">
+							<winclude src="/public/pg-comments.html"></winclude>
+						</ww>
+                      	<ww w-belong="pg-404">
+							We are sorry, such thing is here.
+						</ww>
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->
             </div>

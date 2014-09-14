@@ -1,0 +1,33 @@
+						<div class="row-fluid">
+	                        <div class="col-sm-12">
+								<switchmenu @Current="Rank.RankMode">
+		                         	<ul class="nav nav-pills">
+										<ww #each(_,rm)="RankModes">
+											<li @case="rm.Name">
+												<a href="#" #on(click)="|@Rank.SortBy(rm.Name)"
+												#html="rm.DisplayedName"></a>
+											</li>
+										</ww>
+									</ul>
+								</switchmenu>
+	                        </div>
+						</div>
+                        
+                       	<div class="row-fluid" #each(_,post)="Posts">
+						    <div class="col-sm-1"><votebox @Vote="post.Vote" @ReSortFn="Rank.TopRefresh"></votebox></div>
+                           	<div class="col-sm-11">
+                           		<h3><a @href="|GetLink(post)" #html="post.Title"></a></h3>
+                            	<h4>
+									by {{ post.Author }}
+									<ww #each(_,label)="post.Labels">
+										<span class="label label-default" #html="label"></span>
+									</ww>
+								</h4>
+								<h4>
+                            		<small class="text-muted">{{ post.Time }} hours ago
+									• <a @href="|url('pg-comments', post.Id)">
+										{{ post.Comments| len($1) }} Comments
+									</a></small>
+                            	</h4>
+                         	</div>
+                       	</div>
