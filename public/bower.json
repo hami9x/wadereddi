@@ -18,7 +18,7 @@
     "wade-watch-js": "master",
     "jquery": "~2.1.1",
     "html5-history-api": "~4.1.0",
-    "watch": "*",
     "bootstrap": "~3.2.0",
+    "observe-js": "*"
   }
 }

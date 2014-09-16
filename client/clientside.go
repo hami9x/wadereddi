@@ -56,7 +56,6 @@ var (
 type (
 	RankedList interface {
 		Sort(rankMode string)
-		ApplyChanges()
 	}
 
 	ListRank struct {
@@ -64,18 +63,12 @@ type (
 		List     RankedList
 	}
 
-	ChangeApplier interface {
-		ApplyChanges(interface{})
-	}
-
 	PostsRank struct {
 		List []*Post
-		p    ChangeApplier
 	}
 
 	CommentsRank struct {
 		List []*Comment
-		p    ChangeApplier
 	}
 
 	Comment struct {
@@ -231,7 +224,7 @@ func GenComments(n int) (ret []*Comment) {
 	for i, _ := range ret {
 		ret[i] = &Comment{
 			Author:  NewStrLen(3 + rand.Intn(5)),
-			Content: NewStrLen(rand.Intn(5 + 50)),
+			Content: NewStrLen(rand.Intn(8 + 50)),
 			Time:    rand.Intn(100),
 			Vote:    NewScore(rand.Intn(2)),
 		}
@@ -243,7 +236,6 @@ func GenComments(n int) (ret []*Comment) {
 func (lr *ListRank) SortBy(mode string) {
 	lr.RankMode = mode
 	lr.List.Sort(mode)
-	lr.List.ApplyChanges()
 }
 
 func (lr *ListRank) TopRefresh() {
@@ -256,16 +248,8 @@ func (r PostsRank) Sort(rankMode string) {
 	PostsSort[rankMode](r.List)
 }
 
-func (r PostsRank) ApplyChanges() {
-	r.p.ApplyChanges(&r.List)
-}
-
 func (r CommentsRank) Sort(rankMode string) {
 	CommentsSort[rankMode](r.List)
-}
-
-func (r CommentsRank) ApplyChanges() {
-	r.p.ApplyChanges(&r.List)
 }
 
 func postById(id int) (p *Post, ok bool) {
@@ -299,6 +283,10 @@ func (s *CommentsScope) GetLink(post *Post) string {
 	return getLink(s.BaseScope, post)
 }
 
+func (s *CommentsScope) AddItem() {
+	s.Post.Comments = append(s.Post.Comments, &Comment{Author: "abc", Content: "def", Time: 0, Vote: NewScore(0)})
+}
+
 func InitFunc(r wade.Registration) {
 	r.RegisterDisplayScopes([]wade.PageDesc{
 		wade.MakePage("pg-home", "/home", "Home"),
@@ -326,7 +314,7 @@ func InitFunc(r wade.Registration) {
 			Posts:     posts,
 			Rank: &ListRank{
 				RankMode: RankModeTop,
-				List:     PostsRank{posts, p},
+				List:     PostsRank{posts},
 			},
 			RankModes: RankModes,
 		}
@@ -355,7 +343,7 @@ func InitFunc(r wade.Registration) {
 			Post:      post,
 			Rank: &ListRank{
 				RankMode: RankModeTop,
-				List:     CommentsRank{post.Comments, p},
+				List:     CommentsRank{post.Comments},
 			},
 			RankModes: RankModes,
 		}

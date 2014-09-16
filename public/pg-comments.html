@@ -3,9 +3,9 @@
 	<div class="col-sm-11">
 	   	<div>
 			<a @href="| GetLink(Post)">{{ Post.Title }}</a>
-			<ww #each(_,label)="Post.Labels">
-				<span class="label label-default">{{ label }}</span>
-			</ww>
+			<!--<ww #each(_,label)="Post.Labels">
+				<span class="label label-default">{{ |label }}</span>
+			</ww>-->
 		</div>
 		<div>
 			<small class="text-muted">submitted {{ Post.Time }} hours ago by</small>
@@ -22,7 +22,7 @@
 <div class="row-fluid">
 	<div class="col-sm-12">
 		<div>
-			<small class="text-muted">{{ Post.Comments| len($1) }} Comments</small>
+			<small class="text-muted" id="test">{{ Post.Comments| len(Post.Comments) }} Comments</small>
 		</div>
 		<div>
 			<form>
@@ -30,20 +30,19 @@
 					<textarea rows="3" cols="80"></textarea>
 				</div>
 				<div class="form-group">
-					<button class="btn btn-success">Save</button>
+					<button class="btn btn-success" #on(click)="|AddItem">Save</button>
 					&nbsp;&nbsp; Sort by: 
 					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-						{{ Rank.RankMode }}
-						<span class="caret"></span>
+						{{ Rank.RankMode }} <span class="caret"></span>
 					</button>
-		            <ul class="dropdown-menu">
+		            <!--<ul class="dropdown-menu">
 					  	<ww #each(_,rm)="RankModes">
 							<li>
 								<a href="#" #on(click)="|@Rank.SortBy(rm.Name)"
-								#html="rm.DisplayedName"></a>
+								#html="|rm.DisplayedName"></a>
 							</li>
 						</ww>
-					</ul>
+					</ul>-->
 				</div>
 			</form>
 		</div>
