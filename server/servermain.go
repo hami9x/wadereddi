@@ -18,6 +18,8 @@ const (
 )
 
 func main() {
+	addHandlers()
+
 	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.Dir("../public/"))))
 	if DevMode {
 		http.Handle("/gopath/", http.StripPrefix("/gopath", http.FileServer(http.Dir(os.Getenv("GOPATH")))))

@@ -1,19 +1,18 @@
 <div class="row-fluid">
-	<div class="col-sm-1"><votebox @Vote="Post.Vote" ></votebox></div>
+	<div class="col-sm-1"><votebox @Vote="Post.Vote" @VoteUrl="|GetPostVoteUrl(Post)"></votebox></div>
 	<div class="col-sm-11">
 	   	<div>
 			<a @href="| GetLink(Post)">{{ Post.Title }}</a>
-			<!--<ww #each(_,label)="Post.Labels">
+			<ww #each(_,label)="Post.Labels">
 				<span class="label label-default">{{ |label }}</span>
-			</ww>-->
+			</ww>
 		</div>
 		<div>
 			<small class="text-muted">submitted {{ Post.Time }} hours ago by</small>
 			{{ Post.Author }}
 		</div>
 		<div class="panel panel-default" #ifn="Post.Content| isEmptyStr($1)">
-		  	<div class="panel-body">
-		    	{{ Post.Content }}
+		  	<div class="panel-body" #html="Post.Content">
 		  	</div>
 		</div>
 	</div>
@@ -27,30 +26,31 @@
 		<div>
 			<form>
 				<div class="form-group">
-					<textarea rows="3" cols="80"></textarea>
-				</div>
-				<div class="form-group">
-					<button class="btn btn-success" #on(click)="|AddItem">Save</button>
-					&nbsp;&nbsp; Sort by: 
-					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-						{{ Rank.RankMode }} <span class="caret"></span>
-					</button>
-		            <!--<ul class="dropdown-menu">
-					  	<ww #each(_,rm)="RankModes">
-							<li>
-								<a href="#" #on(click)="|@Rank.SortBy(rm.Name)"
-								#html="|rm.DisplayedName"></a>
-							</li>
-						</ww>
-					</ul>-->
+					<textarea rows="3" cols="80" #value(true)="NewComment"></textarea>
 				</div>
 			</form>
+		</div>
+		<div>
+			<button class="btn btn-success" #disabled="NewComment | isEmptyStr($1)"
+			#on(click)="|AddComment">Save</button>
+			&nbsp;&nbsp; Sort by: 
+			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+				{{ RankMode }} <span class="caret"></span>
+			</button>
+            <ul class="dropdown-menu" role="menu">
+			  	<ww #each(_,rm)="|RankModes">
+					<li>
+						<a href="#" #on(click)="|@FetchComments(rm.Name)"
+						#html="|rm.DisplayedName"></a>
+					</li>
+				</ww>
+			</ul>
 		</div>
 	</div>
 </div>
 
-<div class="row-fluid" #each(_,comment)="Post.Comments">
-	<div class="col-sm-1"><votebox @Vote="comment.Vote"></votebox></div>
+<div class="row-fluid" #each(_,comment)="Comments">
+	<div class="col-sm-1"><votebox @Vote="| comment.Voting()" @VoteUrl="|GetCommentVoteUrl(comment)"></votebox></div>
 	<div class="col-sm-11">
 		<div>
 			<small class="text-muted">submitted {{ comment.Time }} hours ago by</small>
