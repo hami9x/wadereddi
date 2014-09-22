@@ -61,12 +61,10 @@ func (m *VoteBoxModel) DoVote(vote int) {
 			"lastvote": []string{fmt.Sprintf("%v", lastVote)},
 		})
 
-		resp, err := wade.Http().GET(url)
-		if err != nil || resp.Failed() {
+		err := wade.Http().GetJson(&m.Vote.Score, url)
+		if err != nil {
 			return
 		}
-
-		resp.DecodeTo(&m.Vote.Score)
 
 		if m.AfterVote != nil {
 			m.AfterVote()
@@ -96,13 +94,9 @@ func (s *CommentsView) AddComment() {
 			Vote:    c.NewScore(1),
 		}
 
-		resp, err := wade.Http().POST(
+		wade.Http().POST(
 			fmt.Sprintf("/api/comment/add/%v", s.Post.Id),
 			comment)
-
-		if err != nil || resp.Failed() {
-			return
-		}
 
 		s.Comments = append([]*c.Comment{comment}, s.Comments...)
 		s.NewComment = ""
@@ -114,12 +108,8 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 		"sort": []string{rankMode},
 	})
 
-	resp, err := wade.Http().GET(url)
-	if err != nil || resp.Failed() {
-		return
-	}
+	err = wade.Http().GetJson(listPtr, url)
 
-	resp.DecodeTo(listPtr)
 	return
 }
 
@@ -181,9 +171,7 @@ func InitFunc(r wade.Registration) {
 		p.AddValue("FetchPosts", func(rankMode string) {
 			if m.Rank.RankMode != rankMode {
 				m.Rank.RankMode = rankMode
-				go func() {
-					requestPosts(p, rankMode, &m.Posts)
-				}()
+				go requestPosts(p, rankMode, &m.Posts)
 			}
 		})
 
@@ -199,13 +187,8 @@ func InitFunc(r wade.Registration) {
 		}
 
 		// get the post
-		resp, err := wade.Http().GET(fmt.Sprintf("/api/post/%v", postId))
-		if err != nil || resp.Failed() {
-			return
-		}
-
 		var post *c.Post
-		err = resp.DecodeTo(&post)
+		err = wade.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
 		if err != nil {
 			return
 		}
@@ -242,9 +225,7 @@ func InitFunc(r wade.Registration) {
 		p.AddValue("FetchComments", func(rankMode string) {
 			if m.RankMode != rankMode {
 				m.RankMode = rankMode
-				go func() {
-					requestComments(p, m.Post.Id, rankMode, &m.Comments)
-				}()
+				requestComments(p, m.Post.Id, rankMode, &m.Comments)
 			}
 		})
 

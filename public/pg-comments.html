@@ -21,7 +21,7 @@
 <div class="row-fluid">
 	<div class="col-sm-12">
 		<div>
-			<small class="text-muted" id="test">{{ len($Post.Comments) }} Comments</small>
+			<small class="text-muted" id="test">{{ len($Comments) }} Comments</small>
 		</div>
 		<div>
 			<form>
@@ -35,7 +35,7 @@
 			#on(click)="AddComment">Save</button>
 			&nbsp;&nbsp; Sort by: 
 			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-				{{ RankMode }} <span class="caret"></span>
+				{{ $RankMode }} <span class="caret"></span>
 			</button>
             <ul class="dropdown-menu" role="menu">
 			  	<ww #each(_,rm)="RankModes">
@@ -50,10 +50,10 @@
 </div>
 
 <div class="row-fluid" #each(_,comment)="$Comments">
-	<div class="col-sm-1"><votebox @Vote=" comment.Voting()" @VoteUrl="GetCommentVoteUrl(comment)"></votebox></div>
+	<div class="col-sm-1"><votebox @Vote="comment.Voting()" @VoteUrl="GetCommentVoteUrl(comment)"></votebox></div>
 	<div class="col-sm-11">
 		<div>
-			<small class="text-muted">submitted {{ comment.Time }} hours ago by</small>
+			<small class="text-muted">submitted {{ $comment.Time }} hours ago by</small>
 			{{ comment.Author }}
 		</div>
 		<div class="panel panel-default" #ifn="isEmptyStr($comment.Content)">

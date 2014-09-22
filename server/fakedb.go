@@ -37,7 +37,7 @@ var (
 			Labels:   []string{},
 			Time:     5,
 			Content:  "I know u guys are crazy about Techies, and I'm here to give you guys... <br> A troll post XD.",
-			Comments: GenComments(3),
+			Comments: GenComments(5),
 			Vote:     NewScore(100),
 		},
 
