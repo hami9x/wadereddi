@@ -10,9 +10,9 @@ import (
 
 func main() {
 	err := wade.StartApp(wade.AppConfig{
-		StartPage: "pg-home",
-		BasePath:  "/web",
+		BasePath: "/web",
 	}, client.InitFunc, clientside.RenderBackend())
+
 	if err != nil {
 		panic(fmt.Sprintf("Failed to load, error: %v.", err.Error()))
 	}

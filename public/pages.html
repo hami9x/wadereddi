@@ -5,7 +5,7 @@
             <div class="column col-sm-2" id="sidebar">
 				<switchmenu ActiveClass="active" @Current="_pageInfo.Id" w-belong="grp-main">
 				    <ul class="nav">
-			            <li case="pg-home"><a @href="url('pg-home')">Home</a></li>
+			            <li case="pg-home"><a @href="url('pg-posts', 'top')">Posts</a></li>
 				    </ul>
 				</switchmenu>
                 <ul class="nav hidden-xs" id="sidebar-footer">
@@ -20,14 +20,14 @@
             <div class="column col-sm-10" id="main">
                 <div class="padding">
                     <div class="full col-sm-9">
-						<ww w-belong="pg-home">
-							<winclude src="/public/pg-home.html"></winclude>
+						<ww w-belong="pg-posts">
+							<winclude src="/public/pg-posts.html"></winclude>
 						</ww>
 						<ww w-belong="pg-comments">
 							<winclude src="/public/pg-comments.html"></winclude>
 						</ww>
                       	<ww w-belong="pg-404">
-							We are sorry, such thing is here.
+							We are sorry, no such thing is here.
 						</ww>
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->

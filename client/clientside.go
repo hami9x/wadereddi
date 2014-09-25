@@ -123,11 +123,11 @@ func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.C
 
 func InitFunc(r wade.Registration) {
 	r.RegisterDisplayScopes([]wade.PageDesc{
-		wade.MakePage("pg-home", "/home", "Home"),
+		wade.MakePage("pg-posts", "/:mode", "Posts"),
 		wade.MakePage("pg-comments", "/comments/:postid", "Comments for %v"),
 		wade.MakePage("pg-404", "/notfound", "404 Page Not Found"),
 	}, []wade.PageGroupDesc{
-		wade.MakePageGroup("grp-main", []string{"pg-home", "pg-comments"}),
+		wade.MakePageGroup("grp-main", []string{"pg-posts", "pg-comments"}),
 	})
 
 	r.RegisterNotFoundPage("pg-404")
@@ -140,9 +140,19 @@ func InitFunc(r wade.Registration) {
 		Prototype:  &VoteBoxModel{},
 	})
 
-	r.RegisterController("pg-home", func(p *wade.Scope) (err error) {
+	r.RegisterController("pg-posts", func(p *wade.Scope) (err error) {
+		var mode string
+		_ = p.GetParam("mode", &mode)
+
+		switch mode {
+		case c.RankModeLatest:
+			mode = c.RankModeLatest
+		default:
+			mode = c.RankModeTop
+		}
+
 		var posts []*c.Post
-		err = requestPosts(p, c.RankModeTop, &posts)
+		err = requestPosts(p, mode, &posts)
 		if err != nil {
 			return
 		}
@@ -151,7 +161,7 @@ func InitFunc(r wade.Registration) {
 			s:     p,
 			Posts: posts,
 			Rank: &c.ListRank{
-				RankMode: c.RankModeTop,
+				RankMode: mode,
 				List:     c.PostsRank{posts},
 			},
 		}
@@ -171,7 +181,9 @@ func InitFunc(r wade.Registration) {
 		p.AddValue("FetchPosts", func(rankMode string) {
 			if m.Rank.RankMode != rankMode {
 				m.Rank.RankMode = rankMode
-				go requestPosts(p, rankMode, &m.Posts)
+				go func() {
+					requestPosts(p, rankMode, &m.Posts)
+				}()
 			}
 		})
 
@@ -225,7 +237,9 @@ func InitFunc(r wade.Registration) {
 		p.AddValue("FetchComments", func(rankMode string) {
 			if m.RankMode != rankMode {
 				m.RankMode = rankMode
-				requestComments(p, m.Post.Id, rankMode, &m.Comments)
+				go func() {
+					requestComments(p, m.Post.Id, rankMode, &m.Comments)
+				}()
 			}
 		})
 
