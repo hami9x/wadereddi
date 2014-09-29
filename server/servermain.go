@@ -36,8 +36,7 @@ func main() {
 			w.Write(indexBytes)
 		} else {
 			wadeserv.RenderApp(w, wade.AppConfig{
-				StartPage: "pg-home",
-				BasePath:  "/web",
+				BasePath: "/web",
 			}, client.InitFunc, bytes.NewReader(indexBytes), http.DefaultServeMux, r, "/api")
 		}
 	})
