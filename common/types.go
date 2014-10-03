@@ -130,34 +130,6 @@ func NewScore(score int) *Score {
 	return &Score{score, 0}
 }
 
-//func (s *Score) VoteUp() {
-//	switch s.Voted {
-//	case -1:
-//		s.Score += 2
-//		s.Voted = 1
-//	case 0:
-//		s.Score++
-//		s.Voted = 1
-//	case 1:
-//		s.Score--
-//		s.Voted = 0
-//	}
-//}
-
-//func (s *Score) VoteDown() {
-//	switch s.Voted {
-//	case 1:
-//		s.Score -= 2
-//		s.Voted = -1
-//	case 0:
-//		s.Score--
-//		s.Voted = -1
-//	case -1:
-//		s.Score++
-//		s.Voted = 0
-//	}
-//}
-
 func (s *Score) UserVote(vote int, lastVote int) {
 	diff := vote - lastVote
 	if diff > 2 {

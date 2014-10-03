@@ -220,6 +220,10 @@ func InitFunc(r wade.Registration) {
 			RankMode: c.RankModeTop,
 		}
 
+		//for i := 0; i < 4; i++ {
+		//	m.Comments = append(m.Comments, m.Comments...)
+		//}
+
 		p.AddModel(m)
 
 		p.AddValue("GetLink", func(post *c.Post) string {

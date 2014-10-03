@@ -1,0 +1,36 @@
+						<div class="row-fluid">
+	                        <div class="col-sm-12">
+								<switchmenu @Current="$Rank.RankMode">
+		                         	<ul class="nav nav-pills">
+										<ww #each(_,mode)="RankModes">
+											<li @case="mode.Name">
+												<a @href="url('pg-posts', mode.Name)"
+												#html="mode.DisplayedName"></a>
+											</li>
+										</ww>
+									</ul>
+								</switchmenu>
+	                        </div>
+						</div>
+                        
+                       	<div class="row-fluid" #each(_,post)="$Posts">
+						    <div class="col-sm-1">
+								<votebox @Vote="post.Vote" @AfterVote="Rank.TopRefresh"
+									@VoteUrl="GetVoteUrl(post)"></votebox>
+							</div>
+                           	<div class="col-sm-11">
+                           		<h3><a @href="GetLink(post)" #html="post.Title"></a></h3>
+                            	<h4>
+									by {{ post.Author }}
+									<ww #each(_,label)="post.Labels">
+										<span class="label label-default" #html="label"></span>
+									</ww>
+								</h4>
+								<h4>
+                            		<small class="text-muted">{{ post.Time }} hours ago
+									• <a @href="url('pg-comments', post.Id)">
+										{{ len(post.Comments) }} Comments
+									</a></small>
+                            	</h4>
+                         	</div>
+                       	</div>

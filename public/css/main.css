@@ -1,6 +1,7 @@
 /* custom template */
 html, body {
    height: 100%;
+   overflow-x: hidden;
    font-family:'Open Sans',arial,sans-serif;
 }
 
@@ -27,7 +28,6 @@ a {
 
 .column {
     height: 100%;
-    overflow: auto;
     *zoom:1;
 }
 
@@ -52,7 +52,10 @@ a {
 
 #main {
     background-color:#fefefe;
+	margin-left: -15px;
+	overflow-y: scroll;
 }
+
 #main .img-circle {
   margin-top:18px;
   height:70px;
@@ -64,6 +67,7 @@ a {
     background-color:transparent;
 	text-shadow:1px 0 1px #888888;
 }
+
 #sidebar a.logo {
   display:block;
   padding:3px;
@@ -141,4 +145,9 @@ small.text-muted {
 
 .votebox a.highlighted {
 	color: blue;
+}
+
+.w-incomplete {
+	opacity: 0.2;
+	pointer-events: none;
 }

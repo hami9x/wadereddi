@@ -15,7 +15,7 @@ var (
 			Labels:   []string{"Video", "Top play"},
 			Time:     30,
 			Link:     "https://www.youtube.com/watch?v=tBYcgpqskdI",
-			Comments: GenComments(30),
+			Comments: GenComments(55),
 			Vote:     NewScore(3160),
 		},
 
