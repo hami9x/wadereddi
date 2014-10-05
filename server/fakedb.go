@@ -25,7 +25,7 @@ var (
 			Title:    "Guess I'm going to play Captain's Mode the next few weeks to dodge Techies",
 			Labels:   []string{"Fluff"},
 			Time:     10,
-			Comments: GenComments(22),
+			Comments: GenComments(30),
 			Vote:     NewScore(100),
 			Content:  "I think that's a good idea.",
 		},
