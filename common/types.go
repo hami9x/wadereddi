@@ -133,7 +133,7 @@ func NewScore(score int) *Score {
 func (s *Score) UserVote(vote int, lastVote int) {
 	diff := vote - lastVote
 	if diff > 2 {
-		diff = -1
+		diff = 2
 	}
 	if diff < -2 {
 		diff = -2

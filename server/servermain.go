@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	ServersidePrerender = true
+	ServersidePrerender = false
 	DevMode             = true
 )
 
@@ -35,9 +35,13 @@ func main() {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write(indexBytes)
 		} else {
-			wadeserv.RenderApp(w, wade.AppConfig{
+			err := wadeserv.RenderApp(w, wade.AppConfig{
 				BasePath: "/web",
 			}, client.InitFunc, bytes.NewReader(indexBytes), http.DefaultServeMux, r, "/api")
+
+			if err != nil {
+				panic(err)
+			}
 		}
 	})
 

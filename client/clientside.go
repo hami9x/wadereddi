@@ -23,7 +23,7 @@ var (
 type (
 	// VoteBoxModel is the prototype for the "votebox" custom element
 	VoteBoxModel struct {
-		custom.BaseProto
+		*wade.BaseProto
 		Vote      *c.Score
 		VoteUrl   string
 		AfterVote func() // function to be called after a vote is done
@@ -52,6 +52,10 @@ func (m *VoteBoxModel) DoVote(vote int) {
 		panic("VoteUrl has not been set.")
 	}
 
+	if vote < -1 || vote > 1 {
+		panic("Illegal vote value.")
+	}
+
 	lastVote := m.Vote.Voted
 	m.Vote.Voted = vote
 	if vote == lastVote {
@@ -68,7 +72,7 @@ func (m *VoteBoxModel) DoVote(vote int) {
 	go func() {
 		// performs an http request to the server to vote, and get the updated
 		// score after that
-		err := wade.Http().GetJson(&m.Vote.Score, url)
+		err := m.BaseProto.App.Http().GetJson(&m.Vote.Score, url)
 		if err != nil {
 			return
 		}
@@ -84,7 +88,7 @@ func getLink(scope *wade.Scope, post *c.Post) string {
 		return post.Link
 	}
 
-	url, err := scope.Url("pg-comments", post.Id)
+	url, err := scope.GetUrl("pg-comments", post.Id)
 	if err != nil {
 		panic(err)
 	}
@@ -93,23 +97,23 @@ func getLink(scope *wade.Scope, post *c.Post) string {
 }
 
 // AddComment submits the written comment
-func (s *CommentsView) AddComment() {
+func (m *CommentsView) AddComment() {
 	comment := &c.Comment{
 		Author:  CurrentUser,
-		Content: s.NewComment,
+		Content: m.NewComment,
 		Time:    0,
 		Vote:    c.NewScore(1),
 	}
 
 	go func() {
 		// Http request
-		wade.Http().POST(
-			fmt.Sprintf("/api/comment/add/%v", s.Post.Id),
+		m.s.Http().POST(
+			fmt.Sprintf("/api/comment/add/%v", m.Post.Id),
 			comment)
 
 		// Add the comment to the displayed comment list afterwards
-		s.Comments = append([]*c.Comment{comment}, s.Comments...)
-		s.NewComment = ""
+		m.Comments = append([]*c.Comment{comment}, m.Comments...)
+		m.NewComment = ""
 	}()
 }
 
@@ -118,7 +122,7 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 		"sort": []string{rankMode},
 	})
 
-	err = wade.Http().GetJson(listPtr, url)
+	err = s.Http().GetJson(listPtr, url)
 
 	return
 }
@@ -131,33 +135,33 @@ func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.C
 	return requestItems(s, fmt.Sprintf("/api/comments/%v", postId), rankMode, listPtr)
 }
 
-func InitFunc(r wade.Registration) {
+func InitFunc(app *wade.Application) {
 	// Register the pages
-	r.RegisterDisplayScopes([]wade.PageDesc{
+	app.Register.DisplayScopes([]wade.PageDesc{
 		wade.MakePage("pg-posts", "/:mode", "Posts"),
 		wade.MakePage("pg-comments", "/comments/:postid", "Comments for %v"),
-		wade.MakePage("pg-404", "/notfound", "404 Page Not Found"),
+		wade.MakePage("pg-404", "", "404 Page Not Found"),
 	}, []wade.PageGroupDesc{
 		wade.MakePageGroup("grp-main", []string{"pg-posts", "pg-comments"}),
 	})
 
-	r.RegisterNotFoundPage("pg-404")
+	app.Register.NotFoundPage("pg-404")
 
-	// Import Wade.Go standard lib's "switchmenu" custom HTML tag
-	r.RegisterCustomTags(menu.HtmlTags()...)
+	// Import Wade.Go's standard "switchmenu" custom HTML tag
+	app.Register.CustomTags(menu.HtmlTags()...)
 
 	// Register the "votebox" custom HTML tag
-	r.RegisterCustomTags(custom.HtmlTag{
+	app.Register.CustomTags(custom.HtmlTag{
 		Name:       "votebox",
 		Attributes: []string{"Vote", "VoteUrl", "AfterVote"},
 		Prototype:  &VoteBoxModel{},
 	})
 
 	// Register the page controller for page pg-posts
-	r.RegisterController("pg-posts", func(p *wade.Scope) (err error) {
+	app.Register.Controller("pg-posts", func(p *wade.Scope) (err error) {
 		var mode string
-		// Get the named parameter ":mode" from the url
-		_ = p.GetParam("mode", &mode)
+		// Get value of the named parameter ":mode" from the url
+		_ = p.NamedParams.GetTo("mode", &mode)
 
 		switch mode {
 		case c.RankModeLatest:
@@ -167,6 +171,12 @@ func InitFunc(r wade.Registration) {
 		}
 
 		// Perform Http request to request the posts
+		// Notice:
+		// We don't use and shouldn't use a separate goroutine for Http request in a
+		// page controller. Just call it directly,
+		// because each controller is run in its own goroutine already by Wade, and
+		// the page is rendered right after this function returns. If some content
+		// is not available when this function returns, it will not get displayed.
 		var posts []*c.Post
 		err = requestPosts(p, mode, &posts)
 		if err != nil {
@@ -207,17 +217,17 @@ func InitFunc(r wade.Registration) {
 		return
 	})
 
-	r.RegisterController("pg-comments", func(p *wade.Scope) (err error) {
+	app.Register.Controller("pg-comments", func(p *wade.Scope) (err error) {
 		var postId int
-		err = p.GetParam("postid", &postId)
+		err = p.NamedParams.GetTo("postid", &postId)
 		if err != nil {
-			p.RedirectToPage("pg-404")
+			p.GoToPage("pg-404")
 			return
 		}
 
 		// get the post
 		var post *c.Post
-		err = wade.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
+		err = p.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
 		if err != nil {
 			return
 		}
