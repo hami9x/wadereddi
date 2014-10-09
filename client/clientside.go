@@ -136,9 +136,11 @@ func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.C
 }
 
 func InitFunc(app *wade.Application) {
+	app.SetStartPath("/posts/top")
+
 	// Register the pages
 	app.Register.DisplayScopes([]wade.PageDesc{
-		wade.MakePage("pg-posts", "/:mode", "Posts"),
+		wade.MakePage("pg-posts", "/posts/:mode", "Posts"),
 		wade.MakePage("pg-comments", "/comments/:postid", "Comments for %v"),
 		wade.MakePage("pg-404", "", "404 Page Not Found"),
 	}, []wade.PageGroupDesc{

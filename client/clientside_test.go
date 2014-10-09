@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/phaikawl/wade"
 	"github.com/phaikawl/wade/test"
 	hm "github.com/phaikawl/wade/test/httpmock"
+	"github.com/stretchr/testify/require"
 
 	c "github.com/phaikawl/wadereddi/common"
 )
 
 func TestVoteBox(t *testing.T) {
+	t.SkipNow()
 	score := c.NewScore(69)
 	server := hm.NewMock(map[string]hm.Responder{
 		"/v": hm.FuncResponder(func(c *hm.Context) hm.Response {
@@ -46,9 +46,10 @@ func TestVoteBox(t *testing.T) {
 	require.Equal(t, votebox.Vote.Score, 69)
 }
 
-func TestFunctional(t *testing.T) {
-	server := hm.NewMock(map[string]hm.Responder{
+func startApp(t *testing.T) (app *test.TestApp, server *hm.HttpMock) {
+	server = hm.NewMock(map[string]hm.Responder{
 		"/api/posts":        hm.NewJsonResponse(TestDb),
+		"/api/vote/post/3":  hm.NewJsonResponse(97),
 		"/public/*filepath": hm.NewFileResponder("filepath", "../public"),
 	})
 
@@ -58,9 +59,39 @@ func TestFunctional(t *testing.T) {
 	}
 
 	app.Start()
-	app.GoTo("/top")
+
+	return
+}
+
+func TestPostsPage(t *testing.T) {
+	app, server := startApp(t)
+
+	app.GoTo("/posts/top")
 	require.Contains(t, app.View.Title(), "Posts")
 
+	app.View.AssertHaveText(t, app.View.Find("div.post-wrapper"),
+		[][]string{
+			[]string{"title1", "poster1", "96", "2 Comments"},
+			[]string{"title2", "33"},
+		})
+
+	voteBtn := app.View.Find("votebox .upvote-btn").First()
+	score := app.View.Find("votebox .score").First()
+	server.Wait(func() {
+		app.TriggerEvent(voteBtn, test.NewEvent("click"))
+	}, 1)
+
+	app.Digest()
+	require.Equal(t, score.Text(), "97")
+	require.Equal(t, voteBtn.HasClass("highlighted"), true)
+
+	server.Wait(func() {
+		app.TriggerEvent(voteBtn, test.NewEvent("click"))
+	}, 1)
+
+	app.Digest()
+	require.Equal(t, score.First().Text(), "96")
+	require.Equal(t, voteBtn.HasClass("highlighted"), false)
 }
 
 var (
