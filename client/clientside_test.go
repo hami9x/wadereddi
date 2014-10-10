@@ -13,7 +13,6 @@ import (
 )
 
 func TestVoteBox(t *testing.T) {
-	t.SkipNow()
 	score := c.NewScore(69)
 	server := hm.NewMock(map[string]hm.Responder{
 		"/v": hm.FuncResponder(func(c *hm.Context) hm.Response {
@@ -49,7 +48,7 @@ func TestVoteBox(t *testing.T) {
 func startApp(t *testing.T) (app *test.TestApp, server *hm.HttpMock) {
 	server = hm.NewMock(map[string]hm.Responder{
 		"/api/posts":        hm.NewJsonResponse(TestDb),
-		"/api/vote/post/3":  hm.NewJsonResponse(97),
+		"/api/vote/post/3":  hm.NewListResponder([]hm.Responder{hm.NewJsonResponse(97), hm.NewJsonResponse(96)}),
 		"/public/*filepath": hm.NewFileResponder("filepath", "../public"),
 	})
 
