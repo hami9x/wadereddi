@@ -117,6 +117,28 @@ func (m *CommentsView) AddComment() {
 	}()
 }
 
+func requestPosts(s *wade.Scope, rankMode string, listPtr *[]*c.Post) (err error) {
+	return requestItems(s, "/api/posts", rankMode, listPtr)
+}
+
+func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.Comment) (err error) {
+	return requestItems(s, fmt.Sprintf("/api/comments/%v", postId), rankMode, listPtr)
+}
+
+func (m *CommentsView) FetchComments(rankMode string) {
+	if m.RankMode != rankMode {
+		m.RankMode = rankMode
+		go requestComments(m.s, m.Post.Id, rankMode, &m.Comments)
+	}
+}
+
+func (m *PostsView) FetchPosts(rankMode string) {
+	if m.Rank.RankMode != rankMode {
+		m.Rank.RankMode = rankMode
+		go requestPosts(m.s, rankMode, &m.Posts)
+	}
+}
+
 func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface{}) (err error) {
 	url := wade.UrlQuery(ourl, map[string][]string{
 		"sort": []string{rankMode},
@@ -127,15 +149,7 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 	return
 }
 
-func requestPosts(s *wade.Scope, rankMode string, listPtr *[]*c.Post) (err error) {
-	return requestItems(s, "/api/posts", rankMode, listPtr)
-}
-
-func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.Comment) (err error) {
-	return requestItems(s, fmt.Sprintf("/api/comments/%v", postId), rankMode, listPtr)
-}
-
-func InitFunc(app *wade.Application) {
+func AppFunc(app *wade.Application) {
 	app.SetStartPath("/posts/top")
 
 	// Register the pages
@@ -195,9 +209,13 @@ func InitFunc(app *wade.Application) {
 		}
 
 		// Add the view model
+		// all fields of the model are then available in the HTML code
 		p.AddModel(m)
 
-		// Some minor values and functions used in the HTML code
+		// Below are some minor values and helper functions used in the HTML code
+		// These things don't have anything to do with the logic, flow
+		// or changing the data, so using them this way is more
+		// convenient without any real downsides
 
 		p.AddValue("RankModes", c.RankModes)
 
@@ -207,13 +225,6 @@ func InitFunc(app *wade.Application) {
 
 		p.AddValue("GetVoteUrl", func(post *c.Post) string {
 			return fmt.Sprintf("/api/vote/post/%v", post.Id)
-		})
-
-		p.AddValue("FetchPosts", func(rankMode string) {
-			if m.Rank.RankMode != rankMode {
-				m.Rank.RankMode = rankMode
-				go requestPosts(p, rankMode, &m.Posts)
-			}
 		})
 
 		return
@@ -261,15 +272,6 @@ func InitFunc(app *wade.Application) {
 
 		p.AddValue("GetPostVoteUrl", func(post *c.Post) string {
 			return fmt.Sprintf("/api/vote/post/%v", post.Id)
-		})
-
-		p.AddValue("FetchComments", func(rankMode string) {
-			if m.RankMode != rankMode {
-				m.RankMode = rankMode
-				go func() {
-					requestComments(p, m.Post.Id, rankMode, &m.Comments)
-				}()
-			}
 		})
 
 		p.AddValue("RankModes", c.RankModes)

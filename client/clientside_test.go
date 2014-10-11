@@ -52,7 +52,7 @@ func startApp(t *testing.T) (app *test.TestApp, server *hm.HttpMock) {
 		"/public/*filepath": hm.NewFileResponder("filepath", "../public"),
 	})
 
-	app, err := test.NewTestApp(t, wade.AppConfig{}, InitFunc, "../public/index.html", server)
+	app, err := test.NewTestApp(t, wade.AppConfig{}, AppFunc, "../public/index.html", server)
 	if err != nil {
 		panic(err)
 	}

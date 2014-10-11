@@ -37,7 +37,7 @@ func main() {
 		} else {
 			err := wadeserv.RenderApp(w, wade.AppConfig{
 				BasePath: "/web",
-			}, client.InitFunc, bytes.NewReader(indexBytes), http.DefaultServeMux, r, "/api")
+			}, client.AppFunc, bytes.NewReader(indexBytes), http.DefaultServeMux, r, "/api")
 
 			if err != nil {
 				panic(err)

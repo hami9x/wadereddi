@@ -11,7 +11,7 @@ import (
 func main() {
 	app, err := wade.NewApp(wade.AppConfig{
 		BasePath: "/web",
-	}, client.InitFunc, clientside.RenderBackend())
+	}, client.AppFunc, clientside.RenderBackend())
 
 	app.Start()
 
