@@ -3,11 +3,11 @@
         <div class="row">
             <!-- sidebar -->
             <div class="column col-sm-2" id="sidebar">
-				<switchmenu ActiveClass="active" @Current="_pageInfo.Id" w-belong="grp-main">
+				<div w-belong="grp-main">
 				    <ul class="nav">
-			            <li case="pg-home"><a @href="url('pg-posts', 'top')">Posts</a></li>
+			            <li><a @href="url('pg-posts', 'top')">Posts</a></li>
 				    </ul>
-				</switchmenu>
+				</div>
                 <ul class="nav hidden-xs" id="sidebar-footer">
                     <li>
                       <a href="#"><h3>WadeReddi</h3>From Hai with <i class="glyphicon glyphicon-heart-empty"></i></a>
@@ -20,9 +20,9 @@
             <div class="column col-sm-10 w-scrolled" id="main">
                 <div class="padding">
                     <div class="full col-sm-9">
-						<ww w-belong="pg-posts">
+						<div w-belong="pg-posts">
 							<winclude src="/public/pg-posts.html"></winclude>
-						</ww>
+						</div>
 						<ww w-belong="pg-comments">
 							<winclude src="/public/pg-comments.html"></winclude>
 						</ww>

@@ -70,8 +70,8 @@ func (m *VoteBoxModel) DoVote(vote int) {
 
 	// http request is blocking, so we put it in a goroutine, typical Go
 	go func() {
-		// performs an http request to the server to vote, and get the updated
-		// score after that
+		// performs an http request to the server to vote, and assign the updated score
+		// to m.Vote.Score after that
 		err := m.BaseProto.App.Http().GetJson(&m.Vote.Score, url)
 		if err != nil {
 			return
@@ -152,7 +152,7 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 func AppFunc(app *wade.Application) {
 	app.SetStartPath("/posts/top")
 
-	// Register the pages
+	// Declare the pages
 	app.Register.DisplayScopes([]wade.PageDesc{
 		wade.MakePage("pg-posts", "/posts/:mode", "Posts"),
 		wade.MakePage("pg-comments", "/comments/:postid", "Comments for %v"),
@@ -209,7 +209,7 @@ func AppFunc(app *wade.Application) {
 		}
 
 		// Add the view model
-		// all fields of the model are then available in the HTML code
+		// all fields of the model are then available in the HTML code for binding
 		p.AddModel(m)
 
 		// Below are some minor values and helper functions used in the HTML code

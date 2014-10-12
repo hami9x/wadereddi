@@ -13,13 +13,13 @@
 	                        </div>
 						</div>
                         
-                       	<div class="row-fluid post-wrapper" #each(_,post)="$Posts">
+                       	<div #each(_,post)="$Posts" class="row-fluid post-wrapper">
 						    <div class="col-sm-1">
 								<votebox @Vote="post.Vote" @AfterVote="Rank.TopRefresh"
 									@VoteUrl="GetVoteUrl(post)"></votebox>
 							</div>
                            	<div class="col-sm-11">
-                           		<h3><a @href="GetLink(post)" #html="post.Title"></a></h3>
+                           		<h3><a #html="post.Title" @href="GetLink(post)"></a></h3>
                             	<h4>
 									by {{ post.Author }}
 									<ww #each(_,label)="post.Labels">
