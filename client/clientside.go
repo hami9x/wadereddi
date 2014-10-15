@@ -72,7 +72,7 @@ func (m *VoteBoxModel) DoVote(vote int) {
 	go func() {
 		// performs an http request to the server to vote, and assign the updated score
 		// to m.Vote.Score after that
-		err := m.BaseProto.App.Http().GetJson(&m.Vote.Score, url)
+		err := wade.App.Http().GetJson(&m.Vote.Score, url)
 		if err != nil {
 			return
 		}
@@ -107,7 +107,7 @@ func (m *CommentsView) AddComment() {
 
 	go func() {
 		// Http request
-		m.s.Http().POST(
+		wade.App.Http().POST(
 			fmt.Sprintf("/api/comment/add/%v", m.Post.Id),
 			comment)
 
@@ -148,7 +148,7 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 		"sort": []string{rankMode},
 	})
 
-	err = s.Http().GetJson(listPtr, url)
+	err = wade.App.Http().GetJson(listPtr, url)
 
 	return
 }
@@ -247,7 +247,7 @@ func AppFunc(app *wade.Application) {
 
 		// get the post
 		var post *c.Post
-		err = p.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
+		err = wade.App.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
 		if err != nil {
 			return
 		}
@@ -257,6 +257,12 @@ func AppFunc(app *wade.Application) {
 		if err != nil {
 			return
 		}
+
+		//pt := comments[0]
+		//comments = make([]*c.Comment, 300)
+		//for i, _ := range comments {
+		//	comments[i] = pt
+		//}
 
 		p.FormatTitle(post.Title)
 
