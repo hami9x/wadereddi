@@ -33,7 +33,7 @@
 			</form>
 		</div>
 		<div>
-			<button class="btn btn-success" #disabled="isEmptyStr($NewComment)"
+			<button class="btn btn-success" @disabled="isEmptyStr($NewComment)"
 			#on(click)="AddComment">Save</button>
 			&nbsp;&nbsp; Sort by: 
 			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">

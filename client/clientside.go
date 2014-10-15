@@ -128,14 +128,18 @@ func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.C
 func (m *CommentsView) FetchComments(rankMode string) {
 	if m.RankMode != rankMode {
 		m.RankMode = rankMode
-		go requestComments(m.s, m.Post.Id, rankMode, &m.Comments)
+		go func() {
+			requestComments(m.s, m.Post.Id, rankMode, &m.Comments)
+		}()
 	}
 }
 
 func (m *PostsView) FetchPosts(rankMode string) {
 	if m.Rank.RankMode != rankMode {
 		m.Rank.RankMode = rankMode
-		go requestPosts(m.s, rankMode, &m.Posts)
+		go func() {
+			requestPosts(m.s, rankMode, &m.Posts)
+		}()
 	}
 }
 
@@ -150,27 +154,30 @@ func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface
 }
 
 func AppFunc(app *wade.Application) {
-	app.SetStartPath("/posts/top")
-
-	// Declare the pages
-	app.Register.DisplayScopes([]wade.PageDesc{
-		wade.MakePage("pg-posts", "/posts/:mode", "Posts"),
-		wade.MakePage("pg-comments", "/comments/:postid", "Comments for %v"),
-		wade.MakePage("pg-404", "", "404 Page Not Found"),
-	}, []wade.PageGroupDesc{
-		wade.MakePageGroup("grp-main", []string{"pg-posts", "pg-comments"}),
+	app.Router.
+		Handle("/", wade.Redirecter{"/posts/top"}).
+		Handle("/posts/:mode", wade.Page{
+		Id:    "pg-posts",
+		Title: "Posts",
+	}).
+		Handle("/comments/:postid", wade.Page{
+		Id:    "pg-comments",
+		Title: "Comments for %v",
+	}).
+		Otherwise(wade.Page{
+		Id:    "pg-404",
+		Title: "Page Not Found",
 	})
 
-	app.Register.NotFoundPage("pg-404")
+	app.Register.PageGroup("grp-main", []string{"pg-posts", "pg-comments"})
 
 	// Import Wade.Go's standard "switchmenu" custom HTML tag
 	app.Register.CustomTags(menu.HtmlTags()...)
 
 	// Register the "votebox" custom HTML tag
 	app.Register.CustomTags(custom.HtmlTag{
-		Name:       "votebox",
-		Attributes: []string{"Vote", "VoteUrl", "AfterVote"},
-		Prototype:  &VoteBoxModel{},
+		Name:      "votebox",
+		Prototype: &VoteBoxModel{},
 	})
 
 	// Register the page controller for page pg-posts
@@ -199,18 +206,17 @@ func AppFunc(app *wade.Application) {
 			return
 		}
 
-		m := &PostsView{
+		// Set the model for the page
+		// All exported fields of the model will be available as values in
+		// the HTML code
+		p.SetModel(&PostsView{
 			s:     p,
 			Posts: posts,
 			Rank: &c.ListRank{
 				RankMode: mode,
 				List:     c.PostsRank{posts},
 			},
-		}
-
-		// Add the view model
-		// all fields of the model are then available in the HTML code for binding
-		p.AddModel(m)
+		})
 
 		// Below are some minor values and helper functions used in the HTML code
 		// These things don't have anything to do with the logic, flow
@@ -230,6 +236,7 @@ func AppFunc(app *wade.Application) {
 		return
 	})
 
+	// Register the page controller for page pg-comments
 	app.Register.Controller("pg-comments", func(p *wade.Scope) (err error) {
 		var postId int
 		err = p.NamedParams.GetTo("postid", &postId)
@@ -253,14 +260,12 @@ func AppFunc(app *wade.Application) {
 
 		p.FormatTitle(post.Title)
 
-		m := &CommentsView{
+		p.SetModel(&CommentsView{
 			s:        p,
 			Post:     post,
 			Comments: comments,
 			RankMode: c.RankModeTop,
-		}
-
-		p.AddModel(m)
+		})
 
 		p.AddValue("GetLink", func(post *c.Post) string {
 			return getLink(p, post)
