@@ -1,6 +1,6 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<switchmenu @Current="$Rank.RankMode">
+								<wSwitchMenu @Current="$Rank.RankMode">
 		                         	<ul class="nav nav-pills">
 										<ww #each(_,mode)="RankModes">
 											<li @case="mode.Name">
@@ -9,14 +9,14 @@
 											</li>
 										</ww>
 									</ul>
-								</switchmenu>
+								</wSwitchMenu>
 	                        </div>
 						</div>
                         
                        	<div #each(_,post)="$Posts" class="row-fluid post-wrapper">
 						    <div class="col-sm-1">
-								<votebox @Vote="post.Vote" @AfterVote="Rank.TopRefresh"
-									@VoteUrl="GetVoteUrl(post)"></votebox>
+								<VoteBox @Vote="post.Vote" @AfterVote="Rank.TopRefresh"
+									@VoteUrl="GetVoteUrl(post)"></VoteBox>
 							</div>
                            	<div class="col-sm-11">
                            		<h3><a #html="post.Title" @href="GetLink(post)"></a></h3>

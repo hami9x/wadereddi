@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/phaikawl/wade"
-	"github.com/phaikawl/wade/custom"
-	"github.com/phaikawl/wade/taglibs/menu"
+	"github.com/phaikawl/wade/com"
+	"github.com/phaikawl/wade/components/menu"
 
 	c "github.com/phaikawl/wadereddi/common"
 )
@@ -31,14 +31,14 @@ type (
 
 	// PostsView is view model for the page pg-posts
 	PostsView struct {
-		s     *wade.Scope
+		s     *wade.PageScope
 		Posts []*c.Post
 		Rank  *c.ListRank
 	}
 
 	// CommentsView is view model for the page pg-comments
 	CommentsView struct {
-		s          *wade.Scope
+		s          *wade.PageScope
 		Post       *c.Post
 		RankMode   string
 		Comments   []*c.Comment
@@ -72,7 +72,7 @@ func (m *VoteBoxModel) DoVote(vote int) {
 	go func() {
 		// performs an http request to the server to vote, and assign the updated score
 		// to m.Vote.Score after that
-		err := wade.App.Http().GetJson(&m.Vote.Score, url)
+		err := m.BaseProto.App.Http().GetJson(&m.Vote.Score, url)
 		if err != nil {
 			return
 		}
@@ -83,7 +83,7 @@ func (m *VoteBoxModel) DoVote(vote int) {
 	}()
 }
 
-func getLink(scope *wade.Scope, post *c.Post) string {
+func getLink(scope *wade.PageScope, post *c.Post) string {
 	if post.Link != "" {
 		return post.Link
 	}
@@ -107,7 +107,7 @@ func (m *CommentsView) AddComment() {
 
 	go func() {
 		// Http request
-		wade.App.Http().POST(
+		m.s.Http().POST(
 			fmt.Sprintf("/api/comment/add/%v", m.Post.Id),
 			comment)
 
@@ -117,11 +117,11 @@ func (m *CommentsView) AddComment() {
 	}()
 }
 
-func requestPosts(s *wade.Scope, rankMode string, listPtr *[]*c.Post) (err error) {
+func requestPosts(s *wade.PageScope, rankMode string, listPtr *[]*c.Post) (err error) {
 	return requestItems(s, "/api/posts", rankMode, listPtr)
 }
 
-func requestComments(s *wade.Scope, postId int, rankMode string, listPtr *[]*c.Comment) (err error) {
+func requestComments(s *wade.PageScope, postId int, rankMode string, listPtr *[]*c.Comment) (err error) {
 	return requestItems(s, fmt.Sprintf("/api/comments/%v", postId), rankMode, listPtr)
 }
 
@@ -143,12 +143,12 @@ func (m *PostsView) FetchPosts(rankMode string) {
 	}
 }
 
-func requestItems(s *wade.Scope, ourl string, rankMode string, listPtr interface{}) (err error) {
+func requestItems(s *wade.PageScope, ourl string, rankMode string, listPtr interface{}) (err error) {
 	url := wade.UrlQuery(ourl, map[string][]string{
 		"sort": []string{rankMode},
 	})
 
-	err = wade.App.Http().GetJson(listPtr, url)
+	err = s.Http().GetJson(listPtr, url)
 
 	return
 }
@@ -172,16 +172,17 @@ func AppFunc(app *wade.Application) {
 	app.Register.PageGroup("grp-main", []string{"pg-posts", "pg-comments"})
 
 	// Import Wade.Go's standard "switchmenu" custom HTML tag
-	app.Register.CustomTags(menu.HtmlTags()...)
+	app.Register.Components(menu.Components()...)
 
 	// Register the "votebox" custom HTML tag
-	app.Register.CustomTags(custom.HtmlTag{
-		Name:      "votebox",
+	app.Register.Components(com.Spec{
+		Name:      "VoteBox",
 		Prototype: &VoteBoxModel{},
+		Template:  com.DeclaredTemplate{"tmpl-votebox"},
 	})
 
 	// Register the page controller for page pg-posts
-	app.Register.Controller("pg-posts", func(p *wade.Scope) (err error) {
+	app.Register.Controller("pg-posts", func(p *wade.PageScope) (err error) {
 		var mode string
 		// Get value of the named parameter ":mode" from the url
 		_ = p.NamedParams.GetTo("mode", &mode)
@@ -237,7 +238,7 @@ func AppFunc(app *wade.Application) {
 	})
 
 	// Register the page controller for page pg-comments
-	app.Register.Controller("pg-comments", func(p *wade.Scope) (err error) {
+	app.Register.Controller("pg-comments", func(p *wade.PageScope) (err error) {
 		var postId int
 		err = p.NamedParams.GetTo("postid", &postId)
 		if err != nil {
@@ -247,7 +248,7 @@ func AppFunc(app *wade.Application) {
 
 		// get the post
 		var post *c.Post
-		err = wade.App.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
+		err = p.Http().GetJson(&post, fmt.Sprintf("/api/post/%v", postId))
 		if err != nil {
 			return
 		}

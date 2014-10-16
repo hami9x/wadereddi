@@ -31,8 +31,9 @@ func TestVoteBox(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	votebox := &VoteBoxModel{}
-	app.CustomElemInit(votebox)
+	app.ComponentInit(votebox)
 	votebox.VoteUrl = "/v"
 	votebox.Vote = score
 
@@ -68,11 +69,11 @@ func TestPostsPage(t *testing.T) {
 	app.GoTo("/posts/top")
 	require.Contains(t, app.View.Title(), "Posts")
 
-	app.View.AssertHaveText(t, app.View.Find("div.post-wrapper"),
+	require.NoError(t, app.View.CheckText(app.View.Find("div.post-wrapper"),
 		[][]string{
 			[]string{"title1", "poster1", "96", "2 Comments"},
 			[]string{"title2", "33"},
-		})
+		}))
 
 	voteBtn := app.View.Find("votebox .upvote-btn").First()
 	score := app.View.Find("votebox .score").First()
