@@ -171,10 +171,10 @@ func AppFunc(app *wade.Application) {
 
 	app.Register.PageGroup("grp-main", []string{"pg-posts", "pg-comments"})
 
-	// Import Wade.Go's standard "switchmenu" custom HTML tag
+	// Import Wade.Go's standard "wSwitchmenu" component
 	app.Register.Components(menu.Components()...)
 
-	// Register the "votebox" custom HTML tag
+	// Register the "votebox" component
 	app.Register.Components(com.Spec{
 		Name:      "VoteBox",
 		Prototype: &VoteBoxModel{},
