@@ -3,11 +3,9 @@
         <div class="row">
             <!-- sidebar -->
             <div class="column col-sm-2" id="sidebar">
-				<div w-belong="grp-main">
-				    <ul class="nav">
-			            <li><a @href="url('pg-posts', 'top')">Posts</a></li>
-				    </ul>
-				</div>
+			    <ul class="nav">
+		            <li><a @href="$.url('pg-posts', 'top')">Posts</a></li>
+			    </ul>
                 <ul class="nav hidden-xs" id="sidebar-footer">
                     <li>
                       <a href="#"><h3>WadeReddi</h3>From Hai with <i class="glyphicon glyphicon-heart-empty"></i></a>
@@ -17,14 +15,15 @@
             <!-- /sidebar -->
           
             <!-- main -->
-            <div class="column col-sm-10 w-scrolled" id="main">
+            <div class="column col-sm-10" id="main">
                 <div class="padding">
                     <div class="full col-sm-9">
-						<winclude w-belong="pg-posts" src="/public/pg-posts.html"></winclude>
-						<winclude w-belong="pg-comments" src="/public/pg-comments.html"></winclude>
-                      	<ww w-belong="pg-404">
+						<w-include !belong="pg-posts" src="/public/pg-posts.html"></w-include>
+						<w-include !belong="pg-comments" src="/public/pg-comments.html"></w-include>
+						
+                      	<div !belong="pg-404">
 							We are sorry, no such thing is here.
-						</ww>
+						</div>
                     </div><!-- /col-9 -->
                 </div><!-- /padding -->
             </div>
@@ -33,3 +32,4 @@
         </div>
     </div>
 </div>
+<w-include src="/public/com-votebox.html"></w-include>

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/phaikawl/wade"
-	wadeserv "github.com/phaikawl/wade/rbackend/serverside"
+	"github.com/phaikawl/wade/app"
+	wadeserv "github.com/phaikawl/wade/platform/serverside"
 	"github.com/phaikawl/wadereddi/client"
 )
 
@@ -35,12 +35,17 @@ func main() {
 			w.Header().Set("Content-Type", "text/html")
 			w.Write(indexBytes)
 		} else {
-			err := wadeserv.RenderApp(w, wade.AppConfig{
-				BasePath: "/web",
-			}, client.AppFunc, bytes.NewReader(indexBytes), http.DefaultServeMux, r, "/api")
+			httpBkn := wadeserv.NewHttpBackend(http.DefaultServeMux, r, "/api")
+			app := wadeserv.NewApp(app.Config{BasePath: "/web"},
+				bytes.NewReader(indexBytes), r.URL.Path, httpBkn)
+			err := wadeserv.StartRender(app, client.AppMain{app}, w)
 
 			if err != nil {
-				panic(err)
+				if DevMode {
+					panic(err)
+				} else {
+					log.Println(err)
+				}
 			}
 		}
 	})

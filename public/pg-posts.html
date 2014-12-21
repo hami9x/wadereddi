@@ -1,35 +1,33 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<wSwitchMenu @Current="$Rank.RankMode">
+								<w-switchmenu @Current="Pm.RankMode">
 		                         	<ul class="nav nav-pills">
-										<ww #each(_,mode)="RankModes">
+										<div !group #range(_,mode)="RankModes">
 											<li @case="mode.Name">
-												<a @href="url('pg-posts', mode.Name)"
-												#html="mode.DisplayedName"></a>
+												<a @href="$.url('pg-posts', mode.Code)">
+													{{ mode.Name }}
+												</a>
 											</li>
-										</ww>
+										</div>
 									</ul>
-								</wSwitchMenu>
+								</w-switchmenu>
 	                        </div>
 						</div>
                         
-                       	<div #each(_,post)="$Posts" class="row-fluid post-wrapper">
+                       	<div #range(_,post)="Pm.Posts" class="row-fluid post-wrapper">
 						    <div class="col-sm-1">
-								<VoteBox @Vote="post.Vote" @AfterVote="Rank.TopRefresh"
-									@VoteUrl="GetVoteUrl(post)"></VoteBox>
+								<VoteBox @Vote="post.Vote"	@VoteUrl="VoteUrl(post)"></VoteBox>
 							</div>
-                           	<div class="col-sm-11">
-                           		<h3><a #html="post.Title" @href="GetLink(post)"></a></h3>
+                           <div class="col-sm-11">
+                           		<h3><a @href="Ctx.GetLink(post)">{{ post.Title }}</a></h3>
                             	<h4>
 									by {{ post.Author }}
-									<ww #each(_,label)="post.Labels">
-										<span class="label label-default" #html="label"></span>
-									</ww>
+									<span class="label label-default" #range(_,label)="post.Labels">{{ label }}</span>
 								</h4>
 								<h4>
                             		<small class="text-muted">{{ post.Time }} hours ago
-									• <a @href="url('pg-comments', post.Id)">
-										{{ len(post.Comments) }} Comments
+									• <a @href="$.url('pg-comments', post.Id)">
+										{{ $.len(post.Comments) }} Comments
 									</a></small>
                             	</h4>
                          	</div>

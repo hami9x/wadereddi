@@ -3,19 +3,19 @@ package main
 import (
 	"fmt"
 
-	"github.com/phaikawl/wade"
+	"github.com/phaikawl/wade/app"
 	"github.com/phaikawl/wade/rbackend/clientside"
 	"github.com/phaikawl/wadereddi/client"
 )
 
 func main() {
-	app, err := wade.NewApp(wade.AppConfig{
+	app, err := app.New(wade.AppConfig{
 		BasePath: "/web",
-	}, client.AppFunc, clientside.RenderBackend())
-
-	app.Start()
-
+	}, clientside.CreateBackend())
+	
 	if err != nil {
 		panic(fmt.Sprintf("Failed to load, error: %v.", err.Error()))
 	}
+
+	app.Start(client.AppMain{app})
 }

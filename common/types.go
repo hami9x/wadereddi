@@ -1,10 +1,8 @@
 package common
 
-import "sort"
-
 type RankModeInfo struct {
-	Name          string
-	DisplayedName string
+	Code string
+	Name string
 }
 
 const (
@@ -16,26 +14,6 @@ var (
 	RankModes = []RankModeInfo{
 		RankModeInfo{RankModeTop, "Top"},
 		RankModeInfo{RankModeLatest, "Latest"},
-	}
-)
-
-var (
-	PostsSort = map[string]func(posts []*Post){
-		RankModeTop: func(posts []*Post) {
-			sort.Sort(PostsByTop(posts))
-		},
-		RankModeLatest: func(posts []*Post) {
-			sort.Sort(PostsByLatest(posts))
-		},
-	}
-
-	CommentsSort = map[string]func(comments []*Comment){
-		RankModeTop: func(comments []*Comment) {
-			sort.Sort(CommentsByTop(comments))
-		},
-		RankModeLatest: func(comments []*Comment) {
-			sort.Sort(CommentsByLatest(comments))
-		},
 	}
 )
 
@@ -68,47 +46,7 @@ type (
 		Score int
 		Voted int
 	}
-
-	RankedList interface {
-		Sort(rankMode string)
-	}
-
-	ListRank struct {
-		RankMode string
-		List     RankedList
-	}
-
-	PostsRank struct {
-		List []*Post
-	}
-
-	CommentsRank struct {
-		List []*Comment
-	}
 )
-
-func (lr *ListRank) SortBy(mode string) {
-	if lr.RankMode == mode {
-		return
-	}
-
-	lr.RankMode = mode
-	lr.List.Sort(mode)
-}
-
-func (lr *ListRank) TopRefresh() {
-	if lr.RankMode == RankModeTop {
-		lr.List.Sort(RankModeTop)
-	}
-}
-
-func (r PostsRank) Sort(rankMode string) {
-	PostsSort[rankMode](r.List)
-}
-
-func (r CommentsRank) Sort(rankMode string) {
-	CommentsSort[rankMode](r.List)
-}
 
 func (p *Post) Score() int {
 	return p.Vote.Score
