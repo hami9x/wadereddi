@@ -37,9 +37,9 @@ func (am AppMain) PostsHandler(ctx page.Context) page.Scope {
 
 	switch mode {
 	case c.RankModeLatest:
-		mode = c.RankModeTop
-	default:
 		mode = c.RankModeLatest
+	default:
+		mode = c.RankModeTop
 	}
 
 	posts := &PostsVM{

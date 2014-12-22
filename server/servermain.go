@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	ServersidePrerender = false
+	ServersidePrerender = true
 	DevMode             = true
 )
 

@@ -1,16 +1,16 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<w-switchmenu @Current="Pm.RankMode">
+								<w-switch-menu @Current="Pm.RankMode">
 		                         	<ul class="nav nav-pills">
 										<div !group #range(_,mode)="RankModes">
-											<li @case="mode.Name">
+											<li @case="mode.Code">
 												<a @href="$.url('pg-posts', mode.Code)">
 													{{ mode.Name }}
 												</a>
 											</li>
 										</div>
 									</ul>
-								</w-switchmenu>
+								</w-switch-menu>
 	                        </div>
 						</div>
                         

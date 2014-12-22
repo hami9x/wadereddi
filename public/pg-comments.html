@@ -4,7 +4,7 @@
 	</div>
 	<div class="col-sm-11">
 	   	<div>
-			<a @href="Ctx.GetLink(cm.Post)">{{ Cm.Post.Title }}</a>
+			<a @href="Ctx.GetLink(Cm.Post)">{{ Cm.Post.Title }}</a>
 			<div !group #range(_,label)="Cm.Post.Labels">
 				<span class="label label-default">{{ label }}</span>
 			</div>
@@ -14,8 +14,7 @@
 			{{ Cm.Post.Author }}
 		</div>
 		<div class="panel panel-default" #ifn="$.emptyStr(Cm.Post.Content)">
-		  	<div class="panel-body" #html="Cm.Post.Content">
-		  	</div>
+		  	<div class="panel-body">{{ Cm.Post.Content }}</div>
 		</div>
 	</div>
 </div>
@@ -34,14 +33,14 @@
 		</div>
 		<div>
 			<button class="btn btn-success" @disabled="$.emptyStr(Cm.NewComment)"
-			#on(click)="cm.AddComment">Save</button>
+			#on(click)="Cm.AddComment">Save</button>
 			&nbsp;&nbsp; Sort by: 
 			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
 				{{ Cm.RankMode }} <span class="caret"></span>
 			</button>
             <ul class="dropdown-menu" role="menu">
-				<li #range(_,mode)="rankModes">
-					<a href="#" #on(click)="@FetchComments(mode.Code)">
+				<li #range(_,mode)="RankModes">
+					<a href="#" #on(click)="@Cm.Request(mode.Code)">
 						{{ mode.Name }}
 					</a>
 				</li>
@@ -50,7 +49,7 @@
 	</div>
 </div>
 
-<div class="row-fluid" #each(_,comment)="Cm.Comments">
+<div class="row-fluid" #range(_,comment)="Cm.Comments">
 	<div class="col-sm-1"><VoteBox @Vote="comment.Voting()" @VoteUrl="CommentVoteUrl(comment)"></VoteBox></div>
 	<div class="col-sm-11">
 		<div>
