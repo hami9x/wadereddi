@@ -4,7 +4,6 @@ import (
 	"github.com/phaikawl/wade/app"
 	"github.com/phaikawl/wade/components/menu"
 	"github.com/phaikawl/wade/core"
-	"github.com/phaikawl/wade/libs/http"
 	"github.com/phaikawl/wade/page"
 
 	c "github.com/phaikawl/wadereddi/common"
@@ -19,10 +18,6 @@ const (
 
 func App() *app.Application {
 	return app.App()
-}
-
-type httpClient interface {
-	GET(url string) (*http.Response, error)
 }
 
 type AppMain struct {

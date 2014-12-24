@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 
+	"github.com/phaikawl/wade/libs/http"
 	"github.com/phaikawl/wade/page"
 	"github.com/phaikawl/wade/utils"
 
@@ -12,7 +13,7 @@ import (
 type (
 	// CommentsView is view model for the page pg-comments
 	CommentsVM struct {
-		httpClient
+		httpClient *http.Client
 		Post       *c.Post
 		RankMode   string
 		Comments   []*c.Comment

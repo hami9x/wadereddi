@@ -1,8 +1,8 @@
 package client
 
 import (
+	"time"
 
-	//"github.com/phaikawl/wade/app"
 	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/utils"
 	c "github.com/phaikawl/wadereddi/common"
@@ -38,15 +38,20 @@ func (m *VoteBoxModel) DoVote(vote int) {
 		"lastvote": lastVote,
 	})
 
-	// http request is blocking, so we put it in a goroutine, typical Go
+	// performs an http request to the server to vote, and assign the updated score
+	// to m.Vote.Score after that
 	go func() {
-		// performs an http request to the server to vote, and assign the updated score
-		// to m.Vote.Score after that
 		r, _ := App().Http.GET(url)
+
+		time.Sleep(100 * time.Millisecond) // this one is just to make the test reliable for wade's development
+		// don't write like this in a real app
+
 		r.ParseJSON(&m.Vote.Score)
 
 		if m.AfterVote != nil {
 			m.AfterVote()
 		}
+
+		App().NotifyEventFinish()
 	}()
 }
