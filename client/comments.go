@@ -32,7 +32,7 @@ func (m *CommentsVM) AddComment() {
 
 	go func() {
 		// Http request
-		App().Http.POST(
+		m.httpClient.POST(
 			fmt.Sprintf("/api/comment/add/%v", m.Post.Id),
 			comment)
 
@@ -58,12 +58,20 @@ func (vm *CommentsVM) Request(rankMode string) {
 	}
 }
 
-func (am *AppMain) CommentsHandler(ctx page.Context) page.Scope {
+func (vm *CommentsVM) postVoteUrl() string {
+	return fmt.Sprintf("/api/vote/post/%v", vm.Post.Id)
+}
+
+func (vm *CommentsVM) commentVoteUrl(comment *c.Comment) string {
+	return fmt.Sprintf("/api/vote/comment/%v", comment.Id)
+}
+
+func (am *AppMain) CommentsHandler(ctx page.Context) {
 	var postId int
 	err := ctx.NamedParams.ScanTo(&postId, "postid")
 	if err != nil {
 		ctx.GoToPage(PageNotFound)
-		return nil
+		return
 	}
 
 	// get the post
@@ -74,22 +82,12 @@ func (am *AppMain) CommentsHandler(ctx page.Context) page.Scope {
 		panic(err)
 	}
 
-	comments := &CommentsVM{
+	ctx.FormatTitle(post.Title)
+
+	_cvm := &CommentsVM{
 		httpClient: am.Http,
 		Post:       post,
 	}
 
-	comments.Request(c.RankModeTop)
-
-	ctx.FormatTitle(post.Title)
-
-	return page.Scope{
-		"Cm":        comments,
-		"RankModes": c.RankModes,
-		"Ctx":       Context{ctx},
-		"CommentVoteUrl": func(comment *c.Comment) string {
-			return fmt.Sprintf("/api/vote/comment/%v", comment.Id)
-		},
-		"PostVoteUrl": fmt.Sprintf("/api/vote/post/%v", post.Id),
-	}
+	_cvm.Request(c.RankModeTop)
 }

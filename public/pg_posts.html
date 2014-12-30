@@ -1,33 +1,33 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<w-switch-menu @Current="Pm.RankMode">
+								<c:switch_menu *current="_pvm.RankMode">
 		                         	<ul class="nav nav-pills">
-										<div !group #range(_,mode)="RankModes">
+										<w_group #range(_,mode)="_rankModes">
 											<li @case="mode.Code">
-												<a @href="$.url('pg-posts', mode.Code)">
+												<a @href="url(PagePosts, mode.Code)">
 													{{ mode.Name }}
 												</a>
 											</li>
-										</div>
+										</w_group>
 									</ul>
-								</w-switch-menu>
+								</c:switch_menu>
 	                        </div>
 						</div>
                         
-                       	<div #range(_,post)="Pm.Posts" class="row-fluid post-wrapper">
+                       	<div #range(_,post)="_pvm.Posts" class="row-fluid post-wrapper">
 						    <div class="col-sm-1">
-								<VoteBox @Vote="post.Vote"	@VoteUrl="VoteUrl(post)"></VoteBox>
+								<c:votebox *vote="post.Vote" *vote_url="_pvm.voteUrl(post)"></c:votebox>
 							</div>
                            <div class="col-sm-11">
-                           		<h3><a @href="Ctx.GetLink(post)">{{ post.Title }}</a></h3>
+                           		<h3><a @href="ctx().getLink(post)">{{ post.Title }}</a></h3>
                             	<h4>
 									by {{ post.Author }}
 									<span class="label label-default" #range(_,label)="post.Labels">{{ label }}</span>
 								</h4>
 								<h4>
                             		<small class="text-muted">{{ post.Time }} hours ago
-									• <a @href="$.url('pg-comments', post.Id)">
-										{{ $.len(post.Comments) }} Comments
+									• <a @href="url(PageComments, post.Id)">
+										{{ len(post.Comments) }} Comments
 									</a></small>
                             	</h4>
                          	</div>

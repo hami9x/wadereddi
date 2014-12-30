@@ -1,10 +1,13 @@
+<!-- <w_component name="votebox" model="VoteBox" src="public/com_votebox.html" *app="_app"></w_component>
+<w_component name="switch_menu" import='w_menu "/phaikawl/wade/components/menu"' model="w_menu.SwitchMenu"></w_component>-->
+
 <div class="wrapper">
     <div class="box">
         <div class="row">
             <!-- sidebar -->
             <div class="column col-sm-2" id="sidebar">
 			    <ul class="nav">
-		            <li><a @href="$.url('pg-posts', 'top')">Posts</a></li>
+		            <li><a @href="url(PagePosts, `top`)">Posts</a></li>
 			    </ul>
                 <ul class="nav hidden-xs" id="sidebar-footer">
                     <li>
@@ -18,10 +21,10 @@
             <div class="column col-sm-10" id="main">
                 <div class="padding">
                     <div class="full col-sm-9">
-						<w-include !belong="pg-posts" src="/public/pg-posts.html"></w-include>
-						<w-include !belong="pg-comments" src="/public/pg-comments.html"></w-include>
+						<w_include @_belong="PagePosts" src="public/pg_posts.html"></w_include>
+						<w_include @_belong="PageComments" src="public/pg_comments.html"></w_include>
 						
-                      	<div !belong="pg-404">
+                      	<div @_belong="PageNotFound">
 							We are sorry, no such thing is here.
 						</div>
                     </div><!-- /col-9 -->
@@ -32,4 +35,3 @@
         </div>
     </div>
 </div>
-<w-include src="/public/com-votebox.html"></w-include>

@@ -10,8 +10,6 @@ import (
 	c "github.com/phaikawl/wadereddi/common"
 )
 
-var gPosts []*c.Post
-
 type PostsVM struct {
 	httpClient *http.Client
 	Posts      []*c.Post
@@ -33,7 +31,11 @@ func (vm *PostsVM) Request(rankMode string) {
 	}
 }
 
-func (am AppMain) PostsHandler(ctx page.Context) page.Scope {
+func (vm *PostsVM) voteUrl(post *c.Post) string {
+	return fmt.Sprintf("/api/vote/post/%v", post.Id)
+}
+
+func (am AppMain) PostsHandler(ctx page.Context) {
 	var mode string
 
 	// Get value of the named parameter ":mode" from the url
@@ -46,18 +48,10 @@ func (am AppMain) PostsHandler(ctx page.Context) page.Scope {
 		mode = c.RankModeTop
 	}
 
-	posts := &PostsVM{
+	// Export to view symbol
+	_pvm = &PostsVM{
 		httpClient: am.Http,
 	}
 
-	posts.Request(mode)
-	gPosts = posts.Posts
-	return page.Scope{
-		"Pm":        posts,
-		"RankModes": c.RankModes,
-		"Ctx":       Context{ctx},
-		"VoteUrl": func(post *c.Post) string {
-			return fmt.Sprintf("/api/vote/post/%v", post.Id)
-		},
-	}
+	_pvm.Request(mode)
 }

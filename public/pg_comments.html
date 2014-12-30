@@ -1,0 +1,68 @@
+<div class="row-fluid">
+	<div class="col-sm-1">
+		<c:votebox *vote="_cvm.Post.Vote" *vote_url="_cvm.postVoteUrl()"></c:votebox>
+	</div>
+	<div class="col-sm-11">
+	   	<div>
+			<a @href="ctx().getLink(_cvm.Post)">{{ _cvm.Post.Title }}</a>
+			<w_group #range(_,label)="_cvm.Post.Labels">
+				<span class="label label-default">{{ label }}</span>
+			</w_group>
+		</div>
+		<div>
+			<small class="text-muted">submitted {{ _cvm.Post.Time }} hours ago by</small>
+			{{ _cvm.Post.Author }}
+		</div>
+		<div class="panel panel-default" #ifn="_cvm.Post.Content == ``">
+		  	<div class="panel-body">{{ _cvm.Post.Content }}</div>
+		</div>
+	</div>
+</div>
+						
+<div class="row-fluid">
+	<div class="col-sm-12">
+		<div>
+			<small class="text-muted" id="test">{{ len(_cvm.Comments) }} Comments</small>
+		</div>
+		<div>
+			<form>
+				<div class="form-group">
+					<textarea rows="3" cols="80" #value(change)="_cvm.NewComment"></textarea>
+				</div>
+			</form>
+		</div>
+		<div>
+			<button class="btn btn-success" @disabled="_cvm.NewComment == ``"
+			#on(click)="_cvm.AddComment">Save</button>
+			
+			&nbsp;&nbsp; Sort by: 
+			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+				{{ _cvm.RankMode }} <span class="caret"></span>
+			</button>
+            <ul class="dropdown-menu" role="menu">
+				<li #range(_,mode)="_rankModes">
+					<a href="#" #on(click)="func(){ _cvm.Request(mode.Code) }">
+						{{ mode.Name }}
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="row-fluid" #range(_,comment)="_cvm.Comments">
+	<div class="col-sm-1">
+		<c:votebox *vote="comment.Voting()" *vote_url="_cvm.commentVoteUrl(comment)"></c:votebox>
+	</div>
+	<div class="col-sm-11">
+		<div>
+			<small class="text-muted">submitted {{ comment.Time }} hours ago by</small>
+			{{ comment.Author }}
+		</div>
+		<div class="panel panel-default">
+		  	<div class="panel-body">
+		    {{ comment.Content }}
+		  	</div>
+		</div>
+	</div>
+</div>

@@ -5,35 +5,10 @@ import (
 	"github.com/phaikawl/wade/components/menu"
 	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/page"
-
-	c "github.com/phaikawl/wadereddi/common"
 )
-
-const (
-	PageComments = "pg-comments"
-	PagePosts    = "pg-posts"
-	PageNotFound = "pg-404"
-	GrpVotable   = "grp-votable"
-)
-
-func App() *app.Application {
-	return app.App()
-}
 
 type AppMain struct {
 	*app.Application
-}
-
-type Context struct {
-	page.Context
-}
-
-func (ctx Context) GetLink(post *c.Post) string {
-	if post.Link != "" {
-		return post.Link
-	}
-
-	return ctx.PageUrl(PageComments, post.Id)
 }
 
 func (am AppMain) Main(app *app.Application) {
