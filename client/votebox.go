@@ -1,13 +1,16 @@
 package client
 
 import (
+	"time"
+
 	"github.com/phaikawl/wade/app"
+	"github.com/phaikawl/wade/utils"
 	c "github.com/phaikawl/wadereddi/common"
 )
 
 // VoteBoxModel is the prototype for the "votebox" custom element
 type VoteBoxModel struct {
-	app.ComponentProto
+	app.ComponentModel
 	Vote      *c.Score
 	VoteUrl   string
 	AfterVote func() // function to be called after a vote is done
@@ -30,25 +33,25 @@ func (m *VoteBoxModel) DoVote(vote int) {
 		m.Vote.Voted = 0
 	}
 
-	//url := utils.UrlQuery(m.VoteUrl, utils.M{
-	//	"vote":     vote,
-	//	"lastvote": lastVote,
-	//})
+	url := utils.UrlQuery(m.VoteUrl, utils.M{
+		"vote":     vote,
+		"lastvote": lastVote,
+	})
 
 	// performs an http request to the server to vote, and assign the updated score
 	// to m.Vote.Score after that
-	//go func() {
-	//	r, _ := App().Http.GET(url)
+	go func() {
+		r, _ := m.App.Http.GET(url)
 
-	//	time.Sleep(100 * time.Millisecond) // this one is just to make the test reliable for wade's development
-	//	// don't write like this in a real app
+		time.Sleep(100 * time.Millisecond) // this one is just to make the test reliable for wade's development
+		// don't write like this in a real app
 
-	//	r.ParseJSON(&m.Vote.Score)
+		r.ParseJSON(&m.Vote.Score)
 
-	//	if m.AfterVote != nil {
-	//		m.AfterVote()
-	//	}
+		if m.AfterVote != nil {
+			m.AfterVote()
+		}
 
-	//	App().NotifyEventFinish()
-	//}()
+		m.App.NotifyEventFinish()
+	}()
 }

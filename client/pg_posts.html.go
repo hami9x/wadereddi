@@ -1,58 +1,147 @@
 package client
 import (
-	 . "github.com/phaikawl/wade/app/helpers"
-	 wc "github.com/phaikawl/wade/core"
+	. "fmt"
+	. "strings"
+	. "github.com/phaikawl/wade/utils"
+	. "github.com/phaikawl/wade/core"
+	. "github.com/phaikawl/wade/app/utils"
+	"github.com/phaikawl/wade/dom"
 )
 
-var include1 = wc.VPrep(wc.VNode{
+var Tmpl_include1 = VPrep(&VNode{
 	Data: "w_group",
-	Attrs: wc.Attributes{
-		"src": "public/pg_posts.html",	
+	Type: GroupNode,	Binds: []BindFunc{
 	},
-	Children: []wc.VNode{
+	Attrs: Attributes{
+		"src": "public/pg_posts.html",
+		"_belong": PagePosts,
+	},
+	Children: []*VNode{
 		{
 			Data: "div",
-			Attrs: wc.Attributes{
-				"class": "row-fluid",			
+			Type: ElementNode,			Attrs: Attributes{
+				"class": "row-fluid",
 			},
-			Children: []wc.VNode{
+			Children: []*VNode{
 				{
 					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-12",					
+					Type: ElementNode,					Attrs: Attributes{
+						"class": "col-sm-12",
 					},
-					Children: []wc.VNode{
-						{
-							Data: "c:switch_menu",
-							Attrs: wc.Attributes{
-								"*current": "_pvm.RankMode",							
-							},
-							Children: []wc.VNode{
+					Children: []*VNode{
+					},
+				},
+			},
+		},
+		{
+			Data: "w_group",
+			Type: GroupNode,			Binds: []BindFunc{
+				func(__node *VNode) {
+					__data := _pvm.Posts
+					__node.Children = make([]*VNode, len(__data))
+					for __index, post := range __data { post := post 
+						__node.Children[__index] = VPrep(&VNode{
+							Data: "w_group",
+							Type: GroupNode,							Children: []*VNode{
 								{
-									Data: "ul",
-									Attrs: wc.Attributes{
-										"class": "nav nav-pills",									
+									Data: "div",
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "row-fluid post-wrapper",
 									},
-									Children: []wc.VNode{
+									Children: []*VNode{
 										{
-											Data: "w_group",
-											Attrs: wc.Attributes{
-												"#range(_,mode)": "_rankModes",											
+											Data: "div",
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "col-sm-1",
 											},
-											Children: []wc.VNode{
+											Children: []*VNode{
+												VComponent(func() (*VNode, func(*VNode)) {
+															__m := new(VoteBoxModel); __m.Init(); __node := Tmpl_component_votebox(__m)
+															return __node, func(_ *VNode) {
+																__m.Vote = post.Vote
+																__m.VoteUrl = _pvm.voteUrl(post)
+																__m.App = _app()
+																__m.Update(__node)
+															}
+														}),
+											},
+										},
+										{
+											Data: "div",
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "col-sm-11",
+											},
+											Children: []*VNode{
 												{
-													Data: "li",
-													Attrs: wc.Attributes{
-														"@case": "mode.Code",													
-													},
-													Children: []wc.VNode{
+													Data: "h3",
+													Type: ElementNode,													Children: []*VNode{
 														{
 															Data: "a",
-															Attrs: wc.Attributes{
-																"@href": "url(PagePosts, mode.Code)",															
+															Type: ElementNode,															Binds: []BindFunc{
+																func(n *VNode){ n.Attrs["href"] = ctx().getPostLink(post) },
 															},
-															Children: []wc.VNode{
-																wc.VMustache(func() interface{} { return  mode.Name  }),
+															Children: []*VNode{
+																VMustache(func() interface{} { return post.Title }),
+															},
+														},
+													},
+												},
+												{
+													Data: "h4",
+													Type: ElementNode,													Children: []*VNode{
+														VText(` by `),
+														VMustache(func() interface{} { return post.Author }),
+														{
+															Data: "w_group",
+															Type: GroupNode,															Binds: []BindFunc{
+																func(__node *VNode) {
+																	__data := post.Labels
+																	__node.Children = make([]*VNode, len(__data))
+																	for __index, label := range __data { label := label 
+																		__node.Children[__index] = VPrep(&VNode{
+																			Data: "w_group",
+																			Type: GroupNode,																			Children: []*VNode{
+																				{
+																					Data: "span",
+																					Type: ElementNode,																					Attrs: Attributes{
+																						"class": "label label-default",
+																					},
+																					Children: []*VNode{
+																						VMustache(func() interface{} { return label }),
+																					},
+																				},
+																			},
+																		})
+																	}
+																},
+															},
+															Children: []*VNode{
+															},
+														},
+													},
+												},
+												{
+													Data: "h4",
+													Type: ElementNode,													Children: []*VNode{
+														{
+															Data: "small",
+															Type: ElementNode,															Attrs: Attributes{
+																"class": "text-muted",
+															},
+															Children: []*VNode{
+																VMustache(func() interface{} { return post.Time }),
+																VText(` hours ago
+										• `),
+																{
+																	Data: "a",
+																	Type: ElementNode,																	Binds: []BindFunc{
+																		func(n *VNode){ n.Attrs["href"] = Url(PageComments, post.Id) },
+																	},
+																	Children: []*VNode{
+																		VMustache(func() interface{} { return len(post.Comments) }),
+																		VText(` Comments `),
+																	},
+																},
 															},
 														},
 													},
@@ -62,99 +151,14 @@ var include1 = wc.VPrep(wc.VNode{
 									},
 								},
 							},
-						},
-					},
+						})
+					}
 				},
 			},
-		},
-		{
-			Data: "div",
-			Attrs: wc.Attributes{
-				"#range(_,post)": "_pvm.Posts",
-				"class": "row-fluid post-wrapper",			
-			},
-			Children: []wc.VNode{
-				{
-					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-1",					
-					},
-					Children: []wc.VNode{
-						{
-							Data: "c:votebox",
-							Attrs: wc.Attributes{
-								"*vote": "post.Vote",
-								"*vote_url": "_pvm.voteUrl(post)",							
-							},
-						},
-					},
-				},
-				{
-					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-11",					
-					},
-					Children: []wc.VNode{
-						{
-							Data: "h3",
-							Children: []wc.VNode{
-								{
-									Data: "a",
-									Attrs: wc.Attributes{
-										"@href": "ctx().getLink(post)",									
-									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  post.Title  }),
-									},
-								},
-							},
-						},
-						{
-							Data: "h4",
-							Children: []wc.VNode{
-								wc.VText(` by `),
-								wc.VMustache(func() interface{} { return  post.Author  }),
-								{
-									Data: "span",
-									Attrs: wc.Attributes{
-										"class": "label label-default",
-										"#range(_,label)": "post.Labels",									
-									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  label  }),
-									},
-								},
-							},
-						},
-						{
-							Data: "h4",
-							Children: []wc.VNode{
-								{
-									Data: "small",
-									Attrs: wc.Attributes{
-										"class": "text-muted",									
-									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  post.Time  }),
-										wc.VText(` hours ago
-									• `),
-										{
-											Data: "a",
-											Attrs: wc.Attributes{
-												"@href": "url(PageComments, post.Id)",											
-											},
-											Children: []wc.VNode{
-												wc.VMustache(func() interface{} { return  len(post.Comments)  }),
-												wc.VText(` Comments `),
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+			Children: []*VNode{
 			},
 		},
 	},
 })
+
+func init() {_ = Url; _ = Join; _ = ToString; _ = Sprintf; _ = dom.DebugInfo}

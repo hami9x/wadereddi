@@ -1,34 +1,38 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<c:switch_menu *current="_pvm.RankMode">
+								<c:smenu *current="_pvm.RankMode">
 		                         	<ul class="nav nav-pills">
-										<w_group #range(_,mode)="_rankModes">
+										<w_group #for(_,mode)="_rankModes">
 											<li @case="mode.Code">
-												<a @href="url(PagePosts, mode.Code)">
+												<a @href="Url(PagePosts, mode.Code)">
 													{{ mode.Name }}
 												</a>
 											</li>
 										</w_group>
 									</ul>
-								</c:switch_menu>
+								</c:smenu>
 	                        </div>
 						</div>
-                        
-                       	<div #range(_,post)="_pvm.Posts" class="row-fluid post-wrapper">
-						    <div class="col-sm-1">
-								<c:votebox *vote="post.Vote" *vote_url="_pvm.voteUrl(post)"></c:votebox>
-							</div>
-                           <div class="col-sm-11">
-                           		<h3><a @href="ctx().getLink(post)">{{ post.Title }}</a></h3>
-                            	<h4>
-									by {{ post.Author }}
-									<span class="label label-default" #range(_,label)="post.Labels">{{ label }}</span>
-								</h4>
-								<h4>
-                            		<small class="text-muted">{{ post.Time }} hours ago
-									• <a @href="url(PageComments, post.Id)">
-										{{ len(post.Comments) }} Comments
-									</a></small>
-                            	</h4>
-                         	</div>
-                       	</div>
+                       
+						<w_group #for(_,post)="_pvm.Posts"> 
+	                       	<div class="row-fluid post-wrapper">
+							    <div class="col-sm-1">
+									<c:votebox *vote="post.Vote" *vote_url="_pvm.voteUrl(post)"></c:votebox>
+								</div>
+	                           <div class="col-sm-11">
+	                           		<h3><a @href="ctx().getPostLink(post)">{{ post.Title }}</a></h3>
+	                            	<h4>
+										by {{ post.Author }}
+										<w_group #for(_,label)="post.Labels">
+											<span class="label label-default">{{ label }}</span>
+										</w_group>
+									</h4>
+									<h4>
+	                            		<small class="text-muted">{{ post.Time }} hours ago
+										• <a @href="Url(PageComments, post.Id)">
+											{{ len(post.Comments) }} Comments
+										</a></small>
+	                            	</h4>
+	                         	</div>
+	                       	</div>
+						</w_group>

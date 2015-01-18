@@ -1,53 +1,57 @@
 package client
 import (
-	 . "github.com/phaikawl/wade/app/helpers"
-	 wc "github.com/phaikawl/wade/core"
+	. "fmt"
+	. "strings"
+	. "github.com/phaikawl/wade/utils"
+	. "github.com/phaikawl/wade/core"
+	. "github.com/phaikawl/wade/app/utils"
+	"github.com/phaikawl/wade/dom"
 )
 
-var include3 = wc.VPrep(wc.VNode{
+var Tmpl_main = VPrep(&VNode{
 	Data: "w_group",
-	Children: []wc.VNode{
+	Type: GroupNode,	Children: []*VNode{
 		{
 			Data: "div",
-			Attrs: wc.Attributes{
-				"class": "wrapper",			
+			Type: ElementNode,			Attrs: Attributes{
+				"class": "wrapper",
 			},
-			Children: []wc.VNode{
+			Children: []*VNode{
 				{
 					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "box",					
+					Type: ElementNode,					Attrs: Attributes{
+						"class": "box",
 					},
-					Children: []wc.VNode{
+					Children: []*VNode{
 						{
 							Data: "div",
-							Attrs: wc.Attributes{
-								"class": "row",							
+							Type: ElementNode,							Attrs: Attributes{
+								"class": "row",
 							},
-							Children: []wc.VNode{
+							Children: []*VNode{
 								{
 									Data: "div",
-									Attrs: wc.Attributes{
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "column col-sm-2",
 										"id": "sidebar",
-										"class": "column col-sm-2",									
 									},
-									Children: []wc.VNode{
+									Children: []*VNode{
 										{
 											Data: "ul",
-											Attrs: wc.Attributes{
-												"class": "nav",											
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "nav",
 											},
-											Children: []wc.VNode{
+											Children: []*VNode{
 												{
 													Data: "li",
-													Children: []wc.VNode{
+													Type: ElementNode,													Children: []*VNode{
 														{
 															Data: "a",
-															Attrs: wc.Attributes{
-																"@href": "url(PagePosts, `top`)",															
+															Type: ElementNode,															Binds: []BindFunc{
+																func(n *VNode){ n.Attrs["href"] = Url(PagePosts, `top`) },
 															},
-															Children: []wc.VNode{
-																wc.VText(`Posts`),
+															Children: []*VNode{
+																VText(`Posts`),
 															},
 														},
 													},
@@ -56,28 +60,33 @@ var include3 = wc.VPrep(wc.VNode{
 										},
 										{
 											Data: "ul",
-											Attrs: wc.Attributes{
+											Type: ElementNode,											Attrs: Attributes{
 												"class": "nav hidden-xs",
-												"id": "sidebar-footer",											
+												"id": "sidebar-footer",
 											},
-											Children: []wc.VNode{
+											Children: []*VNode{
 												{
 													Data: "li",
-													Children: []wc.VNode{
+													Type: ElementNode,													Children: []*VNode{
 														{
 															Data: "a",
-															Attrs: wc.Attributes{
-																"href": "#",															
+															Type: ElementNode,															Attrs: Attributes{
+																"href": "#",
 															},
-															Children: []wc.VNode{
+															Children: []*VNode{
 																{
 																	Data: "h3",
-																	Children: []wc.VNode{
-																		wc.VText(`WadeReddi`),
+																	Type: ElementNode,																	Children: []*VNode{
+																		VText(`WadeReddi`),
 																	},
 																},
-																wc.VText(`From Hai with `),
-																VElem("i", "glyphicon glyphicon-heart-empty"),
+																VText(`From Hai with `),
+																{
+																	Data: "i",
+																	Type: ElementNode,																	Attrs: Attributes{
+																		"class": "glyphicon glyphicon-heart-empty",
+																	},
+																},
 															},
 														},
 													},
@@ -88,32 +97,31 @@ var include3 = wc.VPrep(wc.VNode{
 								},
 								{
 									Data: "div",
-									Attrs: wc.Attributes{
+									Type: ElementNode,									Attrs: Attributes{
 										"class": "column col-sm-10",
-										"id": "main",									
+										"id": "main",
 									},
-									Children: []wc.VNode{
+									Children: []*VNode{
 										{
 											Data: "div",
-											Attrs: wc.Attributes{
-												"class": "padding",											
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "padding",
 											},
-											Children: []wc.VNode{
+											Children: []*VNode{
 												{
 													Data: "div",
-													Attrs: wc.Attributes{
-														"class": "full col-sm-9",													
+													Type: ElementNode,													Attrs: Attributes{
+														"class": "full col-sm-9",
 													},
-													Children: []wc.VNode{
-														include1,
-														include2,
+													Children: []*VNode{
+														Tmpl_include1,
+														Tmpl_include2,
 														{
 															Data: "div",
-															Attrs: wc.Attributes{
-																"@_belong": "PageNotFound",															
+															Type: ElementNode,															Binds: []BindFunc{
 															},
-															Children: []wc.VNode{
-																wc.VText(` We are sorry, no such thing is here. `),
+															Children: []*VNode{
+																VText(` We are sorry, no such thing is here. `),
 															},
 														},
 													},
@@ -130,3 +138,5 @@ var include3 = wc.VPrep(wc.VNode{
 		},
 	},
 })
+
+func init() {_ = Url; _ = Join; _ = ToString; _ = Sprintf; _ = dom.DebugInfo}

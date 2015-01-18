@@ -1,104 +1,124 @@
 package client
 import (
-	 . "github.com/phaikawl/wade/app/helpers"
-	 wc "github.com/phaikawl/wade/core"
+	. "fmt"
+	. "strings"
+	. "github.com/phaikawl/wade/utils"
+	. "github.com/phaikawl/wade/core"
+	. "github.com/phaikawl/wade/app/utils"
+	"github.com/phaikawl/wade/dom"
 )
 
-var include2 = wc.VPrep(wc.VNode{
+var Tmpl_include2 = VPrep(&VNode{
 	Data: "w_group",
-	Attrs: wc.Attributes{
-		"src": "public/pg_comments.html",	
+	Type: GroupNode,	Binds: []BindFunc{
 	},
-	Children: []wc.VNode{
+	Attrs: Attributes{
+		"src": "public/pg_comments.html",
+		"_belong": PageComments,
+	},
+	Children: []*VNode{
 		{
 			Data: "div",
-			Attrs: wc.Attributes{
-				"class": "row-fluid",			
+			Type: ElementNode,			Attrs: Attributes{
+				"class": "row-fluid",
 			},
-			Children: []wc.VNode{
+			Children: []*VNode{
 				{
 					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-1",					
+					Type: ElementNode,					Attrs: Attributes{
+						"class": "col-sm-1",
 					},
-					Children: []wc.VNode{
-						{
-							Data: "c:votebox",
-							Attrs: wc.Attributes{
-								"*vote": "_cvm.Post.Vote",
-								"*vote_url": "_cvm.postVoteUrl()",							
-							},
-						},
+					Children: []*VNode{
+						VComponent(func() (*VNode, func(*VNode)) {
+									__m := new(VoteBoxModel); __m.Init(); __node := Tmpl_component_votebox(__m)
+									return __node, func(_ *VNode) {
+										__m.Vote = _cvm.Post.Vote
+										__m.VoteUrl = _cvm.postVoteUrl()
+										__m.App = _app()
+										__m.Update(__node)
+									}
+								}),
 					},
 				},
 				{
 					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-11",					
+					Type: ElementNode,					Attrs: Attributes{
+						"class": "col-sm-11",
 					},
-					Children: []wc.VNode{
+					Children: []*VNode{
 						{
 							Data: "div",
-							Children: []wc.VNode{
+							Type: ElementNode,							Children: []*VNode{
 								{
 									Data: "a",
-									Attrs: wc.Attributes{
-										"@href": "ctx().getLink(_cvm.Post)",									
+									Type: ElementNode,									Binds: []BindFunc{
+										func(n *VNode){ n.Attrs["href"] = ctx().getPostLink(_cvm.Post) },
 									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  _cvm.Post.Title  }),
+									Children: []*VNode{
+										VMustache(func() interface{} { return _cvm.Post.Title }),
 									},
 								},
 								{
 									Data: "w_group",
-									Attrs: wc.Attributes{
-										"#range(_,label)": "_cvm.Post.Labels",									
-									},
-									Children: []wc.VNode{
-										{
-											Data: "span",
-											Attrs: wc.Attributes{
-												"class": "label label-default",											
-											},
-											Children: []wc.VNode{
-												wc.VMustache(func() interface{} { return  label  }),
-											},
+									Type: GroupNode,									Binds: []BindFunc{
+										func(__node *VNode) {
+											__data := _cvm.Post.Labels
+											__node.Children = make([]*VNode, len(__data))
+											for __index, label := range __data { label := label 
+												__node.Children[__index] = VPrep(&VNode{
+													Data: "w_group",
+													Type: GroupNode,													Children: []*VNode{
+														{
+															Data: "span",
+															Type: ElementNode,															Attrs: Attributes{
+																"class": "label label-default",
+															},
+															Children: []*VNode{
+																VMustache(func() interface{} { return label }),
+															},
+														},
+													},
+												})
+											}
 										},
 									},
+									Children: []*VNode{
+									},
 								},
 							},
 						},
 						{
 							Data: "div",
-							Children: []wc.VNode{
+							Type: ElementNode,							Children: []*VNode{
 								{
 									Data: "small",
-									Attrs: wc.Attributes{
-										"class": "text-muted",									
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "text-muted",
 									},
-									Children: []wc.VNode{
-										wc.VText(`submitted `),
-										wc.VMustache(func() interface{} { return  _cvm.Post.Time  }),
-										wc.VText(` hours ago by`),
+									Children: []*VNode{
+										VText(`submitted `),
+										VMustache(func() interface{} { return _cvm.Post.Time }),
+										VText(` hours ago by`),
 									},
 								},
-								wc.VMustache(func() interface{} { return  _cvm.Post.Author  }),
+								VMustache(func() interface{} { return _cvm.Post.Author }),
 							},
 						},
 						{
 							Data: "div",
-							Attrs: wc.Attributes{
-								"class": "panel panel-default",
-								"#ifn": "_cvm.Post.Content == ``",							
+							Type: ElementNode,							Binds: []BindFunc{
 							},
-							Children: []wc.VNode{
+							Attrs: Attributes{
+								"class": "panel panel-default",
+							},
+							Children: []*VNode{
 								{
 									Data: "div",
-									Attrs: wc.Attributes{
-										"class": "panel-body",									
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "panel-body",
 									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  _cvm.Post.Content  }),
+									Children: []*VNode{
+										VMustache(func() interface{} { return _cvm.Post.Content }),
 									},
 								},
 							},
@@ -109,50 +129,51 @@ var include2 = wc.VPrep(wc.VNode{
 		},
 		{
 			Data: "div",
-			Attrs: wc.Attributes{
-				"class": "row-fluid",			
+			Type: ElementNode,			Attrs: Attributes{
+				"class": "row-fluid",
 			},
-			Children: []wc.VNode{
+			Children: []*VNode{
 				{
 					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-12",					
+					Type: ElementNode,					Attrs: Attributes{
+						"class": "col-sm-12",
 					},
-					Children: []wc.VNode{
+					Children: []*VNode{
 						{
 							Data: "div",
-							Children: []wc.VNode{
+							Type: ElementNode,							Children: []*VNode{
 								{
 									Data: "small",
-									Attrs: wc.Attributes{
+									Type: ElementNode,									Attrs: Attributes{
+										"id": "test",
 										"class": "text-muted",
-										"id": "test",									
 									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  len(_cvm.Comments)  }),
-										wc.VText(` Comments`),
+									Children: []*VNode{
+										VMustache(func() interface{} { return len(_cvm.Comments) }),
+										VText(` Comments`),
 									},
 								},
 							},
 						},
 						{
 							Data: "div",
-							Children: []wc.VNode{
+							Type: ElementNode,							Children: []*VNode{
 								{
 									Data: "form",
-									Children: []wc.VNode{
+									Type: ElementNode,									Children: []*VNode{
 										{
 											Data: "div",
-											Attrs: wc.Attributes{
-												"class": "form-group",											
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "form-group",
 											},
-											Children: []wc.VNode{
+											Children: []*VNode{
 												{
 													Data: "textarea",
-													Attrs: wc.Attributes{
+													Type: ElementNode,													Binds: []BindFunc{
+													},
+													Attrs: Attributes{
 														"rows": "3",
 														"cols": "80",
-														"#value(change)": "_cvm.NewComment",													
 													},
 												},
 											},
@@ -163,54 +184,82 @@ var include2 = wc.VPrep(wc.VNode{
 						},
 						{
 							Data: "div",
-							Children: []wc.VNode{
+							Type: ElementNode,							Children: []*VNode{
 								{
 									Data: "button",
-									Attrs: wc.Attributes{
-										"#on(click)": "_cvm.AddComment",
-										"class": "btn btn-success",
-										"@disabled": "_cvm.NewComment == ``",									
+									Type: ElementNode,									Binds: []BindFunc{
+										func(n *VNode){ n.Attrs["disabled"] = _cvm.NewComment == `` },
+										func(__node *VNode) {
+											__node.Attrs["onclick"] = func(__event dom.Event) { _cvm.AddComment() }
+										},
 									},
-									Children: []wc.VNode{
-										wc.VText(`Save`),
+									Attrs: Attributes{
+										"class": "btn btn-success",
+									},
+									Children: []*VNode{
+										VText(`Save`),
 									},
 								},
-								wc.VText(` Sort by: `),
+								VText(` Sort by: `),
 								{
 									Data: "button",
-									Attrs: wc.Attributes{
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "btn btn-default dropdown-toggle",
 										"type": "button",
 										"data-toggle": "dropdown",
-										"class": "btn btn-default dropdown-toggle",									
 									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  _cvm.RankMode  }),
-										VElem("span", "caret"),
+									Children: []*VNode{
+										VMustache(func() interface{} { return _cvm.RankMode }),
+										{
+											Data: "span",
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "caret",
+											},
+										},
 									},
 								},
 								{
 									Data: "ul",
-									Attrs: wc.Attributes{
+									Type: ElementNode,									Attrs: Attributes{
+										"role": "menu",
 										"class": "dropdown-menu",
-										"role": "menu",									
 									},
-									Children: []wc.VNode{
+									Children: []*VNode{
 										{
-											Data: "li",
-											Attrs: wc.Attributes{
-												"#range(_,mode)": "_rankModes",											
-											},
-											Children: []wc.VNode{
-												{
-													Data: "a",
-													Attrs: wc.Attributes{
-														"href": "#",
-														"#on(click)": "func(){ _cvm.Request(mode.Code) }",													
-													},
-													Children: []wc.VNode{
-														wc.VMustache(func() interface{} { return  mode.Name  }),
-													},
+											Data: "w_group",
+											Type: GroupNode,											Binds: []BindFunc{
+												func(__node *VNode) {
+													__data := _rankModes
+													__node.Children = make([]*VNode, len(__data))
+													for __index, mode := range __data { mode := mode 
+														__node.Children[__index] = VPrep(&VNode{
+															Data: "w_group",
+															Type: GroupNode,															Children: []*VNode{
+																{
+																	Data: "li",
+																	Type: ElementNode,																	Children: []*VNode{
+																		{
+																			Data: "a",
+																			Type: ElementNode,																			Binds: []BindFunc{
+																				func(__node *VNode) {
+																					__node.Attrs["onclick"] = func(__event dom.Event) { _cvm.Request(mode.Code) }
+																				},
+																			},
+																			Attrs: Attributes{
+																				"href": "#",
+																			},
+																			Children: []*VNode{
+																				VMustache(func() interface{} { return mode.Name }),
+																			},
+																		},
+																	},
+																},
+															},
+														})
+													}
 												},
+											},
+											Children: []*VNode{
 											},
 										},
 									},
@@ -222,70 +271,91 @@ var include2 = wc.VPrep(wc.VNode{
 			},
 		},
 		{
-			Data: "div",
-			Attrs: wc.Attributes{
-				"#range(_,comment)": "_cvm.Comments",
-				"class": "row-fluid",			
-			},
-			Children: []wc.VNode{
-				{
-					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-1",					
-					},
-					Children: []wc.VNode{
-						{
-							Data: "c:votebox",
-							Attrs: wc.Attributes{
-								"*vote": "comment.Voting()",
-								"*vote_url": "_cvm.commentVoteUrl(comment)",							
-							},
-						},
-					},
-				},
-				{
-					Data: "div",
-					Attrs: wc.Attributes{
-						"class": "col-sm-11",					
-					},
-					Children: []wc.VNode{
-						{
-							Data: "div",
-							Children: []wc.VNode{
-								{
-									Data: "small",
-									Attrs: wc.Attributes{
-										"class": "text-muted",									
-									},
-									Children: []wc.VNode{
-										wc.VText(`submitted `),
-										wc.VMustache(func() interface{} { return  comment.Time  }),
-										wc.VText(` hours ago by`),
-									},
-								},
-								wc.VMustache(func() interface{} { return  comment.Author  }),
-							},
-						},
-						{
-							Data: "div",
-							Attrs: wc.Attributes{
-								"class": "panel panel-default",							
-							},
-							Children: []wc.VNode{
+			Data: "w_group",
+			Type: GroupNode,			Binds: []BindFunc{
+				func(__node *VNode) {
+					__data := _cvm.Comments
+					__node.Children = make([]*VNode, len(__data))
+					for __index, comment := range __data { comment := comment 
+						__node.Children[__index] = VPrep(&VNode{
+							Data: "w_group",
+							Type: GroupNode,							Children: []*VNode{
 								{
 									Data: "div",
-									Attrs: wc.Attributes{
-										"class": "panel-body",									
+									Type: ElementNode,									Attrs: Attributes{
+										"class": "row-fluid",
 									},
-									Children: []wc.VNode{
-										wc.VMustache(func() interface{} { return  comment.Content  }),
+									Children: []*VNode{
+										{
+											Data: "div",
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "col-sm-1",
+											},
+											Children: []*VNode{
+												VComponent(func() (*VNode, func(*VNode)) {
+															__m := new(VoteBoxModel); __m.Init(); __node := Tmpl_component_votebox(__m)
+															return __node, func(_ *VNode) {
+																__m.Vote = comment.Voting()
+																__m.VoteUrl = _cvm.commentVoteUrl(comment)
+																__m.App = _app()
+																__m.Update(__node)
+															}
+														}),
+											},
+										},
+										{
+											Data: "div",
+											Type: ElementNode,											Attrs: Attributes{
+												"class": "col-sm-11",
+											},
+											Children: []*VNode{
+												{
+													Data: "div",
+													Type: ElementNode,													Children: []*VNode{
+														{
+															Data: "small",
+															Type: ElementNode,															Attrs: Attributes{
+																"class": "text-muted",
+															},
+															Children: []*VNode{
+																VText(`submitted `),
+																VMustache(func() interface{} { return comment.Time }),
+																VText(` hours ago by`),
+															},
+														},
+														VMustache(func() interface{} { return comment.Author }),
+													},
+												},
+												{
+													Data: "div",
+													Type: ElementNode,													Attrs: Attributes{
+														"class": "panel panel-default",
+													},
+													Children: []*VNode{
+														{
+															Data: "div",
+															Type: ElementNode,															Attrs: Attributes{
+																"class": "panel-body",
+															},
+															Children: []*VNode{
+																VMustache(func() interface{} { return comment.Content }),
+															},
+														},
+													},
+												},
+											},
+										},
 									},
 								},
 							},
-						},
-					},
+						})
+					}
 				},
+			},
+			Children: []*VNode{
 			},
 		},
 	},
 })
+
+func init() {_ = Url; _ = Join; _ = ToString; _ = Sprintf; _ = dom.DebugInfo}

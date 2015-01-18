@@ -8,7 +8,7 @@ import (
 
 var (
 	_rankModes = c.RankModes
-	_app       = app.App()
+	_app       = app.App
 )
 
 var (
@@ -28,7 +28,7 @@ type context struct {
 }
 
 func ctx() context {
-	return context{_app.PageMgr.Context()}
+	return context{_app().PageMgr.Context()}
 }
 
 func (ctx context) getPostLink(post *c.Post) string {

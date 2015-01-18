@@ -2,8 +2,6 @@ package client
 
 import (
 	"github.com/phaikawl/wade/app"
-	"github.com/phaikawl/wade/components/menu"
-	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/page"
 )
 
@@ -12,7 +10,9 @@ type AppMain struct {
 }
 
 func (am AppMain) Main(app *app.Application) {
+	app.PageMgr.SetTemplate(Tmpl_main)
 	am.Application = app
+
 	r := app.Router()
 	r.Handle("/", page.Redirecter{"/posts/top"})
 	r.Handle("/posts/:mode", page.Page{
@@ -28,15 +28,5 @@ func (am AppMain) Main(app *app.Application) {
 	r.Otherwise(page.Page{
 		Id:    PageNotFound,
 		Title: "Page Not Found",
-	})
-
-	// Import Wade.Go's standard "w-switchmenu" component
-	app.AddComponent(menu.Components()...)
-
-	// Register the "votebox" component
-	app.AddComponent(core.ComponentView{
-		Name:      "VoteBox",
-		Prototype: &VoteBoxModel{},
-		Template:  core.HTMLTemplate{"tmpl-votebox"},
 	})
 }
