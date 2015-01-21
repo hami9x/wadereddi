@@ -11,28 +11,40 @@ import (
 var Tmpl_component_votebox = func(__m *VoteBoxModel) *VNode {
 	return VPrep(&VNode{
 			Data: "votebox",
-			Type: ElementNode,			Children: []*VNode{
+			Type: ElementNode,
+			Children: []*VNode{
+				VText(` `),
 				{
 					Data: "div",
-					Type: ElementNode,					Attrs: Attributes{
+					Type: ElementNode,
+					Attrs: Attributes{
 						"class": "votebox",
 					},
 					Children: []*VNode{
+						VText(` `),
 						{
 							Data: "div",
-							Type: ElementNode,							Attrs: Attributes{
-								"class": "row-fluid",
-							},
-						},
-						{
-							Data: "div",
-							Type: ElementNode,							Attrs: Attributes{
+							Type: ElementNode,
+							Attrs: Attributes{
 								"class": "row-fluid",
 							},
 							Children: []*VNode{
+								VText(` `),
+							},
+						},
+						VText(` `),
+						{
+							Data: "div",
+							Type: ElementNode,
+							Attrs: Attributes{
+								"class": "row-fluid",
+							},
+							Children: []*VNode{
+								VText(` `),
 								{
 									Data: "a",
-									Type: ElementNode,									Binds: []BindFunc{
+									Type: ElementNode,
+									Binds: []BindFunc{
 										func(__node *VNode) {
 											__node.Attrs["onclick"] = func(__event dom.Event) { __m.DoVote(1) }
 										},
@@ -42,34 +54,44 @@ var Tmpl_component_votebox = func(__m *VoteBoxModel) *VNode {
 										"href": "#",
 									},
 									Children: []*VNode{
+										VText(` `),
 										{
 											Data: "i",
-											Type: ElementNode,											Attrs: Attributes{
+											Type: ElementNode,
+											Attrs: Attributes{
 												"class": "glyphicon glyphicon-arrow-up",
 											},
 										},
+										VText(` `),
 									},
 								},
+								VText(` `),
 							},
 						},
+						VText(` `),
 						{
 							Data: "div",
-							Type: ElementNode,							Attrs: Attributes{
+							Type: ElementNode,
+							Attrs: Attributes{
 								"class": "row-fluid score",
 							},
 							Children: []*VNode{
 								VMustache(func() interface{} { return __m.Vote.Score }),
 							},
 						},
+						VText(` `),
 						{
 							Data: "div",
-							Type: ElementNode,							Attrs: Attributes{
+							Type: ElementNode,
+							Attrs: Attributes{
 								"class": "row-fluid",
 							},
 							Children: []*VNode{
+								VText(` `),
 								{
 									Data: "a",
-									Type: ElementNode,									Binds: []BindFunc{
+									Type: ElementNode,
+									Binds: []BindFunc{
 										func(__node *VNode) {
 											__node.Attrs["onclick"] = func(__event dom.Event) { __m.DoVote(-1) }
 										},
@@ -79,18 +101,24 @@ var Tmpl_component_votebox = func(__m *VoteBoxModel) *VNode {
 										"href": "#",
 									},
 									Children: []*VNode{
+										VText(` `),
 										{
 											Data: "i",
-											Type: ElementNode,											Attrs: Attributes{
+											Type: ElementNode,
+											Attrs: Attributes{
 												"class": "glyphicon glyphicon-arrow-down",
 											},
 										},
+										VText(` `),
 									},
 								},
+								VText(` `),
 							},
 						},
+						VText(` `),
 					},
 				},
+				VText(` `),
 			},
 		})
 }

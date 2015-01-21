@@ -84,7 +84,7 @@ func (am *AppMain) CommentsHandler(ctx page.Context) {
 
 	ctx.FormatTitle(post.Title)
 
-	_cvm := &CommentsVM{
+	_cvm = &CommentsVM{
 		httpClient: am.Http,
 		Post:       post,
 	}
