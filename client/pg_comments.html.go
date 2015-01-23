@@ -78,7 +78,7 @@ var Tmpl_include2 = VPrep(&VNode{
 										func(__node *VNode) {
 											__data := _cvm.Post.Labels
 											__node.Children = make([]*VNode, len(__data))
-											for __index, label := range __data { label := label 
+											for __index, __value := range __data { label := __value 
 												__node.Children[__index] = VPrep(&VNode{
 													Data: "w_group",
 													Type: GroupNode,
@@ -244,10 +244,10 @@ var Tmpl_include2 = VPrep(&VNode{
 									Data: "button",
 									Type: ElementNode,
 									Binds: []BindFunc{
-										func(n *VNode){ n.Attrs["disabled"] = _cvm.NewComment == `` },
 										func(__node *VNode) {
-											__node.Attrs["onclick"] = func(__event dom.Event) { _cvm.AddComment() }
+											__node.Attrs["onclick"] = func(__event dom.Event) { __event.PreventDefault(); _cvm.AddComment() }
 										},
+										func(n *VNode){ n.Attrs["disabled"] = _cvm.NewComment == `` },
 									},
 									Attrs: Attributes{
 										"class": "btn btn-success",
@@ -296,7 +296,7 @@ var Tmpl_include2 = VPrep(&VNode{
 												func(__node *VNode) {
 													__data := _rankModes
 													__node.Children = make([]*VNode, len(__data))
-													for __index, mode := range __data { mode := mode 
+													for __index, __value := range __data { mode := __value 
 														__node.Children[__index] = VPrep(&VNode{
 															Data: "w_group",
 															Type: GroupNode,
@@ -312,7 +312,7 @@ var Tmpl_include2 = VPrep(&VNode{
 																			Type: ElementNode,
 																			Binds: []BindFunc{
 																				func(__node *VNode) {
-																					__node.Attrs["onclick"] = func(__event dom.Event) { _cvm.Request(mode.Code) }
+																					__node.Attrs["onclick"] = func(__event dom.Event) { __event.PreventDefault(); go _cvm.Request(mode.Code) }
 																				},
 																			},
 																			Attrs: Attributes{
@@ -356,7 +356,7 @@ var Tmpl_include2 = VPrep(&VNode{
 				func(__node *VNode) {
 					__data := _cvm.Comments
 					__node.Children = make([]*VNode, len(__data))
-					for __index, comment := range __data { comment := comment 
+					for __index, __value := range __data { comment := __value 
 						__node.Children[__index] = VPrep(&VNode{
 							Data: "w_group",
 							Type: GroupNode,
@@ -381,8 +381,8 @@ var Tmpl_include2 = VPrep(&VNode{
 												VComponent(func() (*VNode, func(*VNode)) {
 															__m := new(VoteBoxModel); __m.Init(); __node := Tmpl_component_votebox(__m)
 															return __node, func(_ *VNode) {
-																__m.VoteUrl = _cvm.commentVoteUrl(comment)
 																__m.Vote = comment.Voting()
+																__m.VoteUrl = _cvm.commentVoteUrl(comment)
 																__m.App = _app()
 																__m.Update(__node)
 															}

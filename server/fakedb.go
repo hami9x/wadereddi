@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+
 	. "github.com/phaikawl/wadereddi/common"
 )
 
@@ -15,7 +16,7 @@ var (
 			Labels:   []string{"Video", "Top play"},
 			Time:     30,
 			Link:     "https://www.youtube.com/watch?v=tBYcgpqskdI",
-			Comments: GenComments(55),
+			Comments: GenComments(500),
 			Vote:     NewScore(3160),
 		},
 
@@ -45,7 +46,7 @@ var (
 			Id:       5,
 			Author:   "NigmaNoname",
 			Title:    "World's fastest jungle enigma and gem Lv7",
-			Labels:   []string{"Video"},
+			Labels:   []string{"Video", "NSFW"},
 			Time:     40,
 			Link:     "https://www.youtube.com/watch?v=iQlFRmVouIA",
 			Comments: GenComments(10),

@@ -42,7 +42,7 @@
             <ul class="dropdown-menu" role="menu">
 				<w_group #for(_,mode)="_rankModes">
 					<li>
-						<a href="#" #on(click)="_cvm.Request(mode.Code)">
+						<a href="#" #on(click)="go _cvm.Request(mode.Code)">
 							{{ mode.Name }}
 						</a>
 					</li>

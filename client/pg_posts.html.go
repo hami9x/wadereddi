@@ -1,21 +1,20 @@
 package client
-
 import (
 	. "fmt"
 	. "strings"
-
-	. "github.com/phaikawl/wade/app/utils"
-	. "github.com/phaikawl/wade/core"
-	"github.com/phaikawl/wade/dom"
 	. "github.com/phaikawl/wade/utils"
+	. "github.com/phaikawl/wade/core"
+	. "github.com/phaikawl/wade/app/utils"
+	"github.com/phaikawl/wade/dom"
 )
 
 var Tmpl_include1 = VPrep(&VNode{
-	Data:  "w_group",
-	Type:  GroupNode,
-	Binds: []BindFunc{},
+	Data: "w_group",
+	Type: GroupNode,
+	Binds: []BindFunc{
+	},
 	Attrs: Attributes{
-		"src":     "public/pg_posts.html",
+		"src": "public/pg_posts.html",
 		"_belong": PagePosts,
 	},
 	Children: []*VNode{
@@ -50,8 +49,7 @@ var Tmpl_include1 = VPrep(&VNode{
 				func(__node *VNode) {
 					__data := _pvm.Posts
 					__node.Children = make([]*VNode, len(__data))
-					for __index, post := range __data {
-						post := post
+					for __index, __value := range __data { post := __value 
 						__node.Children[__index] = VPrep(&VNode{
 							Data: "w_group",
 							Type: GroupNode,
@@ -74,16 +72,14 @@ var Tmpl_include1 = VPrep(&VNode{
 											Children: []*VNode{
 												VText(` `),
 												VComponent(func() (*VNode, func(*VNode)) {
-													__m := new(VoteBoxModel)
-													__m.Init()
-													__node := Tmpl_component_votebox(__m)
-													return __node, func(_ *VNode) {
-														__m.VoteUrl = _pvm.voteUrl(post)
-														__m.Vote = post.Vote
-														__m.App = _app()
-														__m.Update(__node)
-													}
-												}),
+															__m := new(VoteBoxModel); __m.Init(); __node := Tmpl_component_votebox(__m)
+															return __node, func(_ *VNode) {
+																__m.Vote = post.Vote
+																__m.VoteUrl = _pvm.voteUrl(post)
+																__m.App = _app()
+																__m.Update(__node)
+															}
+														}),
 												VText(` `),
 											},
 										},
@@ -104,7 +100,7 @@ var Tmpl_include1 = VPrep(&VNode{
 															Data: "a",
 															Type: ElementNode,
 															Binds: []BindFunc{
-																func(n *VNode) { n.Attrs["href"] = ctx().getPostLink(post) },
+																func(n *VNode){ n.Attrs["href"] = ctx().getPostLink(post) },
 															},
 															Children: []*VNode{
 																VMustache(func() interface{} { return post.Title }),
@@ -127,8 +123,7 @@ var Tmpl_include1 = VPrep(&VNode{
 																func(__node *VNode) {
 																	__data := post.Labels
 																	__node.Children = make([]*VNode, len(__data))
-																	for __index, label := range __data {
-																		label := label
+																	for __index, __value := range __data { label := __value 
 																		__node.Children[__index] = VPrep(&VNode{
 																			Data: "w_group",
 																			Type: GroupNode,
@@ -150,7 +145,8 @@ var Tmpl_include1 = VPrep(&VNode{
 																	}
 																},
 															},
-															Children: []*VNode{},
+															Children: []*VNode{
+															},
 														},
 														VText(` `),
 													},
@@ -175,7 +171,7 @@ var Tmpl_include1 = VPrep(&VNode{
 																	Data: "a",
 																	Type: ElementNode,
 																	Binds: []BindFunc{
-																		func(n *VNode) { n.Attrs["href"] = Url(PageComments, post.Id) },
+																		func(n *VNode){ n.Attrs["href"] = Url(PageComments, post.Id) },
 																	},
 																	Children: []*VNode{
 																		VText(` `),
@@ -200,9 +196,10 @@ var Tmpl_include1 = VPrep(&VNode{
 					}
 				},
 			},
-			Children: []*VNode{},
+			Children: []*VNode{
+			},
 		},
 	},
 })
 
-func init() { _ = Url; _ = Join; _ = ToString; _ = Sprintf; _ = dom.DebugInfo }
+func init() {_ = Url; _ = Join; _ = ToString; _ = Sprintf; _ = dom.DebugInfo}

@@ -46,7 +46,7 @@ var Tmpl_component_votebox = func(__m *VoteBoxModel) *VNode {
 									Type: ElementNode,
 									Binds: []BindFunc{
 										func(__node *VNode) {
-											__node.Attrs["onclick"] = func(__event dom.Event) { __m.DoVote(1) }
+											__node.Attrs["onclick"] = func(__event dom.Event) { __event.PreventDefault(); __m.DoVote(1) }
 										},
 									},
 									Attrs: Attributes{
@@ -93,12 +93,12 @@ var Tmpl_component_votebox = func(__m *VoteBoxModel) *VNode {
 									Type: ElementNode,
 									Binds: []BindFunc{
 										func(__node *VNode) {
-											__node.Attrs["onclick"] = func(__event dom.Event) { __m.DoVote(-1) }
+											__node.Attrs["onclick"] = func(__event dom.Event) { __event.PreventDefault(); __m.DoVote(-1) }
 										},
 									},
 									Attrs: Attributes{
-										"class": "downvote-btn",
 										"href": "#",
+										"class": "downvote-btn",
 									},
 									Children: []*VNode{
 										VText(` `),
