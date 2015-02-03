@@ -1,20 +1,20 @@
 <div class="row-fluid">
 	<div class="col-sm-1">
-		<c:votebox *vote="_cvm.Post.Vote" *vote_url="_cvm.postVoteUrl()"></c:votebox>
+		<c:votebox *vote="Vm.Post.Vote" *vote_url="Vm.postVoteUrl()"></c:votebox>
 	</div>
 	<div class="col-sm-11">
 	   	<div>
-			<a @href="ctx().getPostLink(_cvm.Post)">{{ _cvm.Post.Title }}</a>
-			<w_group #for(_,label)="_cvm.Post.Labels">
+			<a @href="ctx().getPostLink(Vm.Post)">{{ Vm.Post.Title }}</a>
+			<w_group #for(_,label)="Vm.Post.Labels">
 				<span class="label label-default">{{ label }}</span>
 			</w_group>
 		</div>
 		<div>
-			<small class="text-muted">submitted {{ _cvm.Post.Time }} hours ago by</small>
-			{{ _cvm.Post.Author }}
+			<small class="text-muted">submitted {{ Vm.Post.Time }} hours ago by</small>
+			{{ Vm.Post.Author }}
 		</div>
-		<div class="panel panel-default" #ifn="_cvm.Post.Content == ``">
-		  	<div class="panel-body">{{ _cvm.Post.Content }}</div>
+		<div class="panel panel-default" #if="Vm.Post.Content != ``">
+		  	<div class="panel-body">{{ Vm.Post.Content }}</div>
 		</div>
 	</div>
 </div>
@@ -22,27 +22,27 @@
 <div class="row-fluid">
 	<div class="col-sm-12">
 		<div>
-			<small class="text-muted" id="test">{{ len(_cvm.Comments) }} Comments</small>
+			<small class="text-muted" id="test">{{ len(Vm.Comments) }} Comments</small>
 		</div>
 		<div>
 			<form>
 				<div class="form-group">
-					<textarea rows="3" cols="80" #value(change)="_cvm.NewComment"></textarea>
+					<textarea rows="3" cols="80" #value(change)="Vm.NewComment"></textarea>
 				</div>
 			</form>
 		</div>
 		<div>
-			<button class="btn btn-success" @disabled="_cvm.NewComment == ``"
-			#on(click)="_cvm.AddComment()">Save</button>
+			<button class="btn btn-success" @disabled="Vm.NewComment == ``"
+			#on(click)="Vm.AddComment()">Save</button>
 			
 			&nbsp;&nbsp; Sort by: 
 			<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-				{{ _cvm.RankMode }} <span class="caret"></span>
+				{{ Vm.RankMode }} <span class="caret"></span>
 			</button>
             <ul class="dropdown-menu" role="menu">
-				<w_group #for(_,mode)="_rankModes">
+				<w_group #for(_,mode)="RankModes">
 					<li>
-						<a href="#" #on(click)="go _cvm.Request(mode.Code)">
+						<a href="#" #on(click)="go Vm.Request(mode.Code)">
 							{{ mode.Name }}
 						</a>
 					</li>
@@ -52,10 +52,10 @@
 	</div>
 </div>
 
-<w_group #for(_,comment)="_cvm.Comments">
+<w_group #for(_,comment)="Vm.Comments">
 	<div class="row-fluid">
 		<div class="col-sm-1">
-			<c:votebox *vote="comment.Voting()" *vote_url="_cvm.commentVoteUrl(comment)"></c:votebox>
+			<c:votebox *vote="comment.Voting()" *vote_url="Vm.commentVoteUrl(comment)"></c:votebox>
 		</div>
 		<div class="col-sm-11">
 			<div>

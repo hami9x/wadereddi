@@ -1,34 +1,25 @@
 package client
 
 import (
-	"github.com/phaikawl/wade/app"
 	"github.com/phaikawl/wade/page"
+	"github.com/phaikawl/wade/rt"
 	c "github.com/phaikawl/wadereddi/common"
 )
 
 var (
-	_rankModes = c.RankModes
-	_app       = app.App
-)
-
-var (
-	_cvm *CommentsVM
-	_pvm *PostsVM
-)
-
-const (
-	PageComments = "pg-comments"
-	PagePosts    = "pg-posts"
-	PageNotFound = "pg-404"
-	GrpVotable   = "grp-votable"
+	RankModes = c.RankModes
 )
 
 type context struct {
-	page.Context
+	*page.Context
+}
+
+func app() *rt.Application {
+	return rt.App()
 }
 
 func ctx() context {
-	return context{_app().PageMgr.Context()}
+	return context{app().PageMgr.Context()}
 }
 
 func (ctx context) getPostLink(post *c.Post) string {
@@ -36,5 +27,5 @@ func (ctx context) getPostLink(post *c.Post) string {
 		return post.Link
 	}
 
-	return ctx.PageUrl(PageComments, post.Id)
+	return ctx.PageUrl(CommentsPage, post.Id)
 }

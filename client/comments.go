@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 
+	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/libs/http"
 	"github.com/phaikawl/wade/page"
 	"github.com/phaikawl/wade/utils"
@@ -12,7 +13,7 @@ import (
 
 type (
 	// CommentsView is view model for the page pg-comments
-	CommentsVM struct {
+	CommentsPageVM struct {
 		httpClient *http.Client
 		Post       *c.Post
 		RankMode   string
@@ -22,7 +23,7 @@ type (
 )
 
 // AddComment submits the written comment
-func (m *CommentsVM) AddComment() {
+func (m *CommentsPageVM) AddComment() {
 	comment := &c.Comment{
 		Author:  "me",
 		Content: m.NewComment,
@@ -42,7 +43,7 @@ func (m *CommentsVM) AddComment() {
 	}()
 }
 
-func (vm *CommentsVM) Request(rankMode string) {
+func (vm *CommentsPageVM) Request(rankMode string) {
 	if vm.RankMode == rankMode {
 		return
 	}
@@ -50,7 +51,7 @@ func (vm *CommentsVM) Request(rankMode string) {
 	vm.RankMode = rankMode
 
 	route := fmt.Sprintf("/api/comments/%v", vm.Post.Id)
-	url := utils.UrlQuery(route, utils.M{"sort": vm.RankMode})
+	url := utils.UrlQuery(route, utils.Map{"sort": vm.RankMode})
 	r, _ := vm.httpClient.GET(url)
 	err := r.ParseJSON(&vm.Comments)
 	if err != nil {
@@ -58,20 +59,19 @@ func (vm *CommentsVM) Request(rankMode string) {
 	}
 }
 
-func (vm *CommentsVM) postVoteUrl() string {
+func (vm *CommentsPageVM) postVoteUrl() string {
 	return fmt.Sprintf("/api/vote/post/%v", vm.Post.Id)
 }
 
-func (vm *CommentsVM) commentVoteUrl(comment *c.Comment) string {
+func (vm *CommentsPageVM) commentVoteUrl(comment *c.Comment) string {
 	return fmt.Sprintf("/api/vote/comment/%v", comment.Id)
 }
 
-func (am *AppMain) CommentsHandler(ctx page.Context) {
+func (am App) CommentsPageHandler(ctx *page.Context) *core.VNode {
 	var postId int
 	err := ctx.NamedParams.ScanTo(&postId, "postid")
 	if err != nil {
-		ctx.GoToPage(PageNotFound)
-		return
+		return ctx.GoToPage(NotFoundPage)
 	}
 
 	// get the post
@@ -84,10 +84,11 @@ func (am *AppMain) CommentsHandler(ctx page.Context) {
 
 	ctx.FormatTitle(post.Title)
 
-	_cvm = &CommentsVM{
+	vm := &CommentsPageVM{
 		httpClient: am.Http,
 		Post:       post,
 	}
 
-	_cvm.Request(c.RankModeTop)
+	vm.Request(c.RankModeTop)
+	return vm.Template()
 }

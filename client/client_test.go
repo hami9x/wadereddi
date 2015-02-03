@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/phaikawl/wade/app"
+	"github.com/phaikawl/wade/rt"
 	"github.com/phaikawl/wade/test/fntest"
 	hm "github.com/phaikawl/wade/test/httpmock"
 
@@ -14,7 +14,6 @@ import (
 )
 
 func TestVoteBox(t *testing.T) {
-	t.SkipNow()
 	score := c.NewScore(69)
 	server := hm.NewMock(map[string]hm.Responder{
 		"/v": hm.FuncResponder(func(c *hm.Context) hm.Response {
@@ -44,16 +43,16 @@ func TestVoteBox(t *testing.T) {
 	require.Equal(t, votebox.Vote.Score, 69)
 }
 
-func startApp(t *testing.T) (myApp *fntest.TestApp, server *hm.HttpMock) {
-	server = hm.NewMock(map[string]hm.Responder{
+func startApp(t *testing.T) (myApp *fntest.TestApp) {
+	server := hm.NewMock(map[string]hm.Responder{
 		"/api/posts":        hm.NewJsonResponse(TestDb),
 		"/api/vote/post/3":  hm.NewListResponder([]hm.Responder{hm.NewJsonResponse(97), hm.NewJsonResponse(96)}),
 		"/public/*filepath": hm.NewFileResponder("filepath", "../public"),
 	})
 
-	myApp = fntest.NewTestApp(app.Config{}, "/", "../public/index.html", server)
+	myApp = fntest.NewTestApp(rt.Config{}, "/", "../public/index.html", server)
 
-	err := myApp.Start(AppMain{myApp.Application})
+	err := myApp.Start(App{myApp.Application})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +61,7 @@ func startApp(t *testing.T) (myApp *fntest.TestApp, server *hm.HttpMock) {
 }
 
 func TestPostsPage(t *testing.T) {
-	app, server := startApp(t)
+	app := startApp(t)
 
 	app.GoTo("/posts/top")
 
@@ -75,18 +74,14 @@ func TestPostsPage(t *testing.T) {
 	voteBtn := app.View.Find("votebox .upvote-btn").Eq(0)
 	score := app.View.Find("votebox .score").Eq(0)
 
-	server.Wait(func() {
-		app.View.TriggerEvent(voteBtn, fntest.NewEvent("click"))
-	}, 1)
+	app.View.TriggerEvent(voteBtn, fntest.NewEvent("click"))
 
-	app.Render()
+	<-app.Render()
+	//println("^^", app.Document().Find(".score").Length(), "^^")
 	require.Equal(t, score.Text(), "97")
 
-	server.Wait(func() {
-		app.View.TriggerEvent(voteBtn, fntest.NewEvent("click"))
-	}, 1)
-
-	app.Render()
+	app.View.TriggerEvent(voteBtn, fntest.NewEvent("click"))
+	<-app.Render()
 	require.Equal(t, score.Text(), "96")
 }
 

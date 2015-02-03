@@ -1,10 +1,10 @@
 						<div class="row-fluid">
 	                        <div class="col-sm-12">
-								<c:smenu *current="_pvm.RankMode">
+								<c:smenu *current="Vm.RankMode">
 		                         	<ul class="nav nav-pills">
-										<w_group #for(_,mode)="_rankModes">
+										<w_group #for(_,mode)="RankModes">
 											<li @case="mode.Code">
-												<a @href="Url(PagePosts, mode.Code)">
+												<a @href="Url(PostsPage, mode.Code)">
 													{{ mode.Name }}
 												</a>
 											</li>
@@ -14,10 +14,10 @@
 	                        </div>
 						</div>
                        
-						<w_group #for(_,post)="_pvm.Posts"> 
+						<w_group #for(_,post)="Vm.Posts"> 
 	                       	<div class="row-fluid post-wrapper">
 							    <div class="col-sm-1">
-									<c:votebox *vote="post.Vote" *vote_url="_pvm.voteUrl(post)"></c:votebox>
+									<c:votebox *vote="post.Vote" *vote_url="Vm.voteUrl(post)"></c:votebox>
 								</div>
 	                           <div class="col-sm-11">
 	                           		<h3><a @href="ctx().getPostLink(post)">{{ post.Title }}</a></h3>
@@ -29,7 +29,7 @@
 									</h4>
 									<h4>
 	                            		<small class="text-muted">{{ post.Time }} hours ago
-										• <a @href="Url(PageComments, post.Id)">
+										• <a @href="Url(CommentsPage, post.Id)">
 											{{ len(post.Comments) }} Comments
 										</a></small>
 	                            	</h4>

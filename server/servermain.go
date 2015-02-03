@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/phaikawl/wade/app"
 	wadeserv "github.com/phaikawl/wade/platform/serverside"
+	"github.com/phaikawl/wade/rt"
 	"github.com/phaikawl/wadereddi/client"
 )
 
@@ -36,9 +36,9 @@ func main() {
 			w.Write(indexBytes)
 		} else {
 			httpBkn := wadeserv.NewHttpBackend(http.DefaultServeMux, r, "/api")
-			app := wadeserv.NewApp(app.Config{BasePath: "/web"},
+			app := wadeserv.NewApp(rt.Config{BasePath: "/web"},
 				bytes.NewReader(indexBytes), r.URL.Path, httpBkn)
-			err := wadeserv.StartRender(app, client.AppMain{app}, w)
+			err := wadeserv.StartRender(app, client.App{app}, w)
 
 			if err != nil {
 				if DevMode {
