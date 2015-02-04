@@ -40,6 +40,7 @@ func (m *CommentsPageVM) AddComment() {
 		// Add the comment to the displayed comment list afterwards
 		m.Comments = append([]*c.Comment{comment}, m.Comments...)
 		m.NewComment = ""
+		app().Render()
 	}()
 }
 
