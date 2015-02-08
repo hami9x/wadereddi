@@ -3,10 +3,10 @@ package client
 import (
 	"fmt"
 
-	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/libs/http"
 	"github.com/phaikawl/wade/page"
 	"github.com/phaikawl/wade/utils"
+	"github.com/phaikawl/wade/vdom"
 
 	c "github.com/phaikawl/wadereddi/common"
 )
@@ -68,7 +68,7 @@ func (vm *CommentsPageVM) commentVoteUrl(comment *c.Comment) string {
 	return fmt.Sprintf("/api/vote/comment/%v", comment.Id)
 }
 
-func (am App) CommentsPageHandler(ctx *page.Context) *core.VNode {
+func (am App) CommentsPageHandler(ctx *page.Context) *vdom.VNode {
 	var postId int
 	err := ctx.NamedParams.ScanTo(&postId, "postid")
 	if err != nil {

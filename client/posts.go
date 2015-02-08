@@ -3,10 +3,10 @@ package client
 import (
 	"fmt"
 
-	"github.com/phaikawl/wade/core"
 	"github.com/phaikawl/wade/libs/http"
 	"github.com/phaikawl/wade/page"
 	"github.com/phaikawl/wade/utils"
+	"github.com/phaikawl/wade/vdom"
 
 	c "github.com/phaikawl/wadereddi/common"
 )
@@ -38,7 +38,7 @@ func (vm *PostsPageVM) voteUrl(post *c.Post) string {
 	return fmt.Sprintf("/api/vote/post/%v", post.Id)
 }
 
-func (am App) PostsPageHandler(ctx *page.Context) *core.VNode {
+func (am App) PostsPageHandler(ctx *page.Context) *vdom.VNode {
 	var mode string
 
 	// Get value of the named parameter ":mode" from the url
