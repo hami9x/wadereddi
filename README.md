@@ -4,6 +4,7 @@ wadereddi
 Reddit-like demo, written with the Wade.Go framework
 
 How to run this:
+
 1. Install Wade's Template Compiler (`go get github.com/phaikawl/wade`).  
 2. Go to this package's directory and run `wade` to generate Go files for the templates.  
 3. Install this forked version of `fresh` the dev server runner `go get github.com/phaikawl/fresh`.  
